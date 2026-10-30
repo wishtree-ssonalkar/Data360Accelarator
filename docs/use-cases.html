@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WishUnify Use Cases</title>
+<meta name="description" content="Who can use WishUnify, which clients to target, buying signals, worked examples by industry, a demo script and positioning.">
+<link rel="stylesheet" href="assets/docs.css">
+<script src="assets/docs.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">WU</div><div class="brand-name">WishUnify</div></div>
+  <p class="brand-sub">Documentation · Wishtree Technologies</p>
+  <nav class="nav">
+    <div class="nav-group">Start here</div>
+    <a href="index.html">Overview</a>
+    <a href="use-cases.html" aria-current="page">Who it's for &amp; examples</a>
+    <div class="nav-group">Understand</div>
+    <a href="architecture.html">Architecture</a>
+    <a href="data-requirements.html">Data requirements</a>
+    <div class="nav-group">Set up &amp; use</div>
+    <a href="prerequisites.html">Prerequisites &amp; installation</a>
+    <a href="user-guide.html">User guide</a>
+    <a href="admin-guide.html">Admin &amp; onboarding guide</a>
+    <div class="nav-group">Reference</div>
+    <a href="faq.html">FAQ, glossary &amp; limits</a>
+  </nav>
+  <button class="theme-toggle" type="button">Theme: system</button>
+</aside>
+
+<main><div class="content">
+  <header class="page-head">
+    <div class="eyebrow">Start here</div>
+    <h1>Who it's for, target clients &amp; examples</h1>
+    <p class="lead">Who uses WishUnify day to day, which businesses benefit most, how to recognise a good prospect, and
+      worked examples of what WishUnify delivers for different kinds of clients.</p>
+  </header>
+
+  <div class="toc"><strong>On this page</strong><ol>
+    <li><a href="#users">Who can use it</a></li>
+    <li><a href="#targets">Target clients</a></li>
+    <li><a href="#profile">Ideal client profile</a></li>
+    <li><a href="#signals">Buying signals</a></li>
+    <li><a href="#fit">Good fit vs not yet a fit</a></li>
+    <li><a href="#examples">Worked examples</a></li>
+    <li><a href="#questions">Example questions by industry</a></li>
+    <li><a href="#demo">15-minute demo script</a></li>
+    <li><a href="#pitch">Positioning and pitch</a></li>
+  </ol></div>
+
+  <h2 id="users">Who can use it</h2>
+  <h3>At the client</h3>
+  <div class="cards">
+    <div class="card persona"><div class="icon">MK</div><div><h4>Marketing manager</h4><p>Builds campaign audiences by segment, tier, city and consent; measures segment sizes and value.</p></div></div>
+    <div class="card persona"><div class="icon">CR</div><div><h4>CRM / retention lead</h4><p>Works the win-back list, tracks churn risk and repeat rate, runs loyalty programmes.</p></div></div>
+    <div class="card persona"><div class="icon">CX</div><div><h4>Customer experience / support head</h4><p>Sees a customer's full history before calls; links complaints to products and value.</p></div></div>
+    <div class="card persona"><div class="icon">LD</div><div><h4>Business leadership</h4><p>Revenue, active customers, value at risk on one page; asks questions in plain English.</p></div></div>
+    <div class="card persona"><div class="icon">MD</div><div><h4>Merchandising / category manager</h4><p>Best sellers, margins, refund and complaint hot-spots by product.</p></div></div>
+    <div class="card persona"><div class="icon">DG</div><div><h4>E-commerce / digital manager</h4><p>Conversion funnel by device, abandoned carts, online vs store behaviour.</p></div></div>
+    <div class="card persona"><div class="icon">DA</div><div><h4>Data analyst</h4><p>Uses the clean Customer 360 and Gold tables, reuses the AI-generated SQL, builds new KPIs.</p></div></div>
+    <div class="card persona"><div class="icon">AD</div><div><h4>Client IT / data admin</h4><p>Maintains sources, credentials and mappings from the admin screens; monitors refreshes.</p></div></div>
+  </div>
+  <h3>At Wishtree</h3>
+  <ul>
+    <li><strong>Sales and pre-sales:</strong> demos on the sample businesses; scoping with the data requirements page.</li>
+    <li><strong>Delivery / data engineers:</strong> deploy, onboard sources, build mappings, validate numbers (Admin guide, Implementation playbook).</li>
+    <li><strong>Support:</strong> monitor runs and data quality; extend KPIs and connectors.</li>
+  </ul>
+
+  <h2 id="targets">Target clients</h2>
+  <p>WishUnify's standard model is built around <strong>customers who buy things</strong> (orders, products), with support and
+    website behaviour on top. Fit by industry:</p>
+  <div class="table-wrap"><table>
+    <tr><th>Industry</th><th>Fit</th><th>Why</th></tr>
+    <tr><td>Omnichannel retail (fashion, footwear, electronics, home, beauty)</td><td><span class="badge good">Excellent</span></td><td>Online + store + CRM + support is exactly the problem WishUnify solves; POS phone matching links walk-in buyers.</td></tr>
+    <tr><td>D2C and e-commerce brands</td><td><span class="badge good">Excellent</span></td><td>Shopify/WooCommerce, marketplaces, helpdesk, web analytics; repeat purchase and retention matter most.</td></tr>
+    <tr><td>Restaurants, QSR, cafés, cloud kitchens</td><td><span class="badge good">Very good</span></td><td>POS + own app + delivery platform orders; frequency and lapsing guests drive revenue.</td></tr>
+    <tr><td>Pharmacy, grocery, convenience chains</td><td><span class="badge good">Very good</span></td><td>High-frequency purchases, loyalty phone numbers at billing, refill / repeat patterns.</td></tr>
+    <tr><td>Consumer services (salons, spas, fitness, clinics, auto service)</td><td><span class="badge good">Good</span></td><td>Bookings/invoices map to orders; services map to products; visit frequency and churn.</td></tr>
+    <tr><td>Hospitality and travel</td><td><span class="badge warn">Good with extension</span></td><td>Bookings map to orders; stays, nights and loyalty points may need extra fields.</td></tr>
+    <tr><td>Education / EdTech</td><td><span class="badge warn">Good with extension</span></td><td>Enrolments as orders, courses as products; engagement events.</td></tr>
+    <tr><td>Subscriptions / SaaS / telecom</td><td><span class="badge warn">Needs extension</span></td><td>Needs a subscription entity (plan, MRR, renewals) added to the model.</td></tr>
+    <tr><td>Banking, insurance, lending</td><td><span class="badge warn">Needs extension</span></td><td>Accounts, policies and claims are different entities; plus stricter compliance.</td></tr>
+    <tr><td>B2B distributors / manufacturers</td><td><span class="badge warn">Partial</span></td><td>Works for orders by customer account; contact-level identity and B2B hierarchies need extension.</td></tr>
+  </table></div>
+
+  <h2 id="profile">Ideal client profile</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Attribute</th><th>Sweet spot</th></tr>
+    <tr><td>Size</td><td>Mid-market: roughly ₹50 Cr–₹2,000 Cr revenue, or 20k–5M customers</td></tr>
+    <tr><td>Systems</td><td>3 or more systems holding customer data (store, POS, CRM, helpdesk, app)</td></tr>
+    <tr><td>Today</td><td>No CDP yet, or a CDP that is too expensive / under-used; reports built manually in Excel</td></tr>
+    <tr><td>Team</td><td>Small data team or none; marketing wants self-service</td></tr>
+    <tr><td>Budget sensitivity</td><td>Cannot justify Salesforce Data Cloud / Adobe RT-CDP licences</td></tr>
+    <tr><td>Data control</td><td>Wants data to stay in their own cloud or server</td></tr>
+  </table></div>
+
+  <h2 id="signals">Buying signals</h2>
+  <ul>
+    <li>"We don't know how many <em>unique</em> customers we have."</li>
+    <li>"Online and store customers are completely separate for us."</li>
+    <li>"Campaign lists are pulled manually into Excel every time."</li>
+    <li>"We don't know who stopped buying until it's too late."</li>
+    <li>"Our CDP quote / renewal is too expensive." or "We bought a CDP and nobody uses it."</li>
+    <li>"Support doesn't know a caller is one of our best customers."</li>
+    <li>Launching a loyalty programme, an app, or moving to omnichannel.</li>
+    <li>Recently migrated data platform (e.g. a WishBridge migration): natural next step is Customer 360 on the new platform.</li>
+  </ul>
+
+  <h2 id="fit">Good fit vs not yet a fit</h2>
+  <div class="cards">
+    <div class="card"><h4>Good fit</h4><p>Transactions with a customer identifier (email, phone or id) in at least one system; 12+ months of history; a business owner who wants to act on segments.</p></div>
+    <div class="card"><h4>Not yet a fit</h4><p>No customer identifiers at all (anonymous cash sales only); needs real-time personalisation in milliseconds; needs to push audiences into ad platforms automatically today; very large data (billions of rows) without moving to a cloud warehouse.</p></div>
+  </div>
+
+  <h2 id="examples">Worked examples</h2>
+  <div class="callout info"><strong>Illustrative scenarios</strong>These show the kind of setup, findings and actions to expect.
+    Examples 1 and 2 use the same sources and rules as the two demo businesses; the findings are typical outcomes, not
+    measured results from a real client.</div>
+
+  <div class="example">
+    <h3>1. Omnichannel footwear retailer</h3>
+    <p><strong>Client:</strong> 60 stores + website + app, ~200k customers. (This is the "Stride Footwear" sample in the demo.)</p>
+    <p><strong>Sources:</strong> Shopify customers and orders · store POS export (phone only) · Salesforce contacts · Zendesk tickets · web/app events · product catalog.</p>
+    <p><strong>What WishUnify finds:</strong></p>
+    <ul>
+      <li>Store receipts are linked to online customers by phone, revealing that a large share of top online customers also buy in store.</li>
+      <li>Duplicate Shopify accounts and CRM contacts collapse into one profile per person.</li>
+      <li>"At Risk" and "Cannot Lose Them" segments with high past spend, plus a <em>value at risk</em> figure for leadership.</li>
+      <li>A few running-shoe models with high refund rates and "size / fit" tickets.</li>
+    </ul>
+    <p><strong>Actions:</strong> win-back campaign to opted-in At Risk Gold customers; size-guide fix for the problem models; VIP early access for Champions.</p>
+  </div>
+
+  <div class="example">
+    <h3>2. D2C home-decor brand</h3>
+    <p><strong>Client:</strong> online-first, marketplace sales, one experience store, ~80k customers. (The "UrbanLeaf Home" sample.)</p>
+    <p><strong>Sources:</strong> Shopify · marketplace order reports (CSV upload) · Freshdesk tickets · GA4 events export.</p>
+    <p><strong>Business rules:</strong> longer purchase cycle, so "active" = bought within 365 days and higher tier thresholds.</p>
+    <p><strong>What WishUnify finds:</strong> repeat purchases cluster around 3–4 months after a furniture order (accessories);
+      "damaged in transit" tickets concentrate on two product lines; mobile web converts much worse than desktop.</p>
+    <p><strong>Actions:</strong> automated accessory recommendations at 90 days; packaging change with the courier; mobile checkout fix.</p>
+  </div>
+
+  <div class="example">
+    <h3>3. Restaurant chain (QSR)</h3>
+    <p><strong>Client:</strong> 40 outlets, own ordering app, delivery partners, loyalty by phone number.</p>
+    <p><strong>Sources:</strong> POS database (SQL Server, incremental by bill time) · app orders (PostgreSQL) · delivery-partner settlement reports (CSV) · feedback forms (CSV).</p>
+    <p><strong>Mapping notes:</strong> bills → orders (channel "Dine-in", "Takeaway", "App", "Delivery"); menu items → products; feedback → tickets with CSAT.</p>
+    <p><strong>What WishUnify finds:</strong> guests who switched from dine-in to delivery-only; weekly regulars who lapsed after a bad rating; best-selling combos by outlet.</p>
+    <p><strong>Actions:</strong> "we miss you" offers to lapsed regulars; service recovery calls after low CSAT; outlet-level menu decisions.</p>
+  </div>
+
+  <div class="example">
+    <h3>4. Pharmacy chain</h3>
+    <p><strong>Client:</strong> 150 stores + e-pharmacy app, loyalty by mobile number.</p>
+    <p><strong>Sources:</strong> store billing (Oracle, via ODBC) · app orders (REST API) · product master (Excel upload) · call-centre tickets.</p>
+    <p><strong>What WishUnify finds:</strong> chronic-care customers whose regular refill gap is ~30 days, flagged as churn risk when they pass 2× their usual gap; app-only vs store-only vs both customers and their value.</p>
+    <p><strong>Actions:</strong> refill reminders before the usual gap; move high-value store-only customers to the app with home delivery.</p>
+    <div class="callout warn"><strong>Privacy</strong>Load purchase data, not prescriptions or diagnoses; check local health-data rules and keep the AI summary off if required.</div>
+  </div>
+
+  <h2 id="questions">Example questions by industry</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Industry</th><th>Questions users ask in "Ask your data"</th></tr>
+    <tr><td>Retail</td><td class="q">Which Platinum customers bought only online last year? · Top 10 cities by revenue from new customers this year · Which categories do Champions buy most?</td></tr>
+    <tr><td>D2C</td><td class="q">What share of first-time buyers came back within 90 days, by month? · Which products have the most "damaged" tickets?</td></tr>
+    <tr><td>Restaurants</td><td class="q">Guests with 4+ orders a month who haven't ordered in 30 days · Average order value by channel and outlet</td></tr>
+    <tr><td>Pharmacy / grocery</td><td class="q">Customers whose days since last order is more than twice their usual gap · Revenue from app vs store by city</td></tr>
+    <tr><td>Services</td><td class="q">Clients who visited monthly but not in the last 60 days · Which services have the lowest CSAT?</td></tr>
+  </table></div>
+
+  <h2 id="demo">15-minute demo script</h2>
+  <ol class="steps">
+    <li><strong>The problem (1 min)</strong>"Your customer data lives in 5 systems. Here is what it looks like when it's unified."</li>
+    <li><strong>Executive overview (2 min)</strong>Unified profiles from N source records; revenue by channel; value at risk; "Who needs attention this week".</li>
+    <li><strong>Customer 360 (3 min)</strong>Open a top customer: tier, segment, churn risk, next best action; Timeline across store, web and support; Source records tab shows how they were matched.</li>
+    <li><strong>Segments (3 min)</strong>Segment map and RFM grid; build an "At Risk + Cannot Lose Them, opted-in, Mumbai" audience; export CSV.</li>
+    <li><strong>Retention and products (2 min)</strong>Cohort grid; problem-products chart.</li>
+    <li><strong>Ask your data (2 min)</strong>"Which cities have the most At Risk customers and what are they worth?" Show the chart, the summary and the SQL.</li>
+    <li><strong>Admin (2 min)</strong>Sources &amp; connections: Test connection shows raw and mapped rows; Mappings: dropdown column picker; Run now.</li>
+  </ol>
+
+  <h2 id="pitch">Positioning and pitch</h2>
+  <div class="callout info"><strong>One-liner</strong>WishUnify gives you a single view of every customer across your store,
+    online, CRM and support systems, with segments, churn risk and plain-English answers, in weeks, on your own
+    infrastructure, without a CDP licence.</div>
+  <ul>
+    <li><strong>Versus commercial CDPs:</strong> no licence, data stays with the client, customizable mappings and rules, faster to tailor.</li>
+    <li><strong>Versus building in-house:</strong> weeks instead of months; proven model, connectors, identity matching, dashboards and AI already built.</li>
+    <li><strong>Versus BI dashboards alone:</strong> BI shows totals; WishUnify first creates the unified customer that BI tools can't, then adds segments and actions.</li>
+    <li><strong>With WishBridge:</strong> migrate the data platform with WishBridge, then unify customers on it with WishUnify.</li>
+  </ul>
+
+  <nav class="page-nav"><a href="index.html">← Overview</a><a href="architecture.html">Architecture →</a></nav>
+  <footer class="doc-footer">WishUnify · Customer Data Platform accelerator · Wishtree Technologies</footer>
+</div></main>
+</body>
+</html>

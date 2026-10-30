@@ -1,0 +1,3 @@
+source_key,email,phone,first_name,last_name,full_name,city,region,lead_source,accepts_marketing,created_at
+C-1001,riya.sharma@gmail.com,+91 98765 43210,Riya,Sharma,,Pune,West,Instagram,true,2024-05-04 13:39:00
+C-1002,amit.jain@outlook.com,9988776655,Amit,Jain,,Mumbai,West,Store walk-in,false,2025-01-12 10:05:00

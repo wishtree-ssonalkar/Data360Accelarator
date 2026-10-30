@@ -1,5 +1,9 @@
 # WishUnify – Customer Data Platform accelerator
 
+> **Documentation:** open [`docs/index.html`](docs/index.html) in a browser for the full guide: overview, who it's
+> for and examples, architecture, data requirements, prerequisites and installation, user guide, admin and
+> onboarding guide, and FAQ. CSV templates for clients are in [`docs/templates/`](docs/templates/).
+
 *by Wishtree Technologies*
 
 WishUnify connects a client's customer data from all its systems, works out which records belong to
@@ -82,8 +86,11 @@ in `config/.history/` and audit-logged.
 
 ## AI assistant
 
-Set `ANTHROPIC_API_KEY` (Claude) or `GEMINI_API_KEY` (Gemini; `GEMINI_MODEL` to change model). If both are set,
-Claude is used unless `CDP_AI_PROVIDER=gemini`. Without a key, the example questions still work.
+Choose the provider in the app under **Admin > AI assistant**: Anthropic Claude, Google Gemini, OpenAI,
+Azure OpenAI, or any OpenAI-compatible service (Groq, Mistral, OpenRouter, a local Ollama). Enter the model and
+API key (stored encrypted), click **Test connection**, then **Save**. Setting `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`,
+`OPENAI_API_KEY`, `AZURE_OPENAI_API_KEY` or `OPENAI_COMPATIBLE_API_KEY` on the server also works. Without a
+provider, the example questions still work.
 
 ## Not yet included
 
@@ -102,5 +109,5 @@ cdp/                        connectors, mapping engine, identity, pipeline, CLI,
 sql/silver, sql/gold        models over the standard tables
 app/                        Streamlit app
 tests/                      pytest suite
-docs/ONBOARDING.md          how to add a client or a source
+docs/                       HTML documentation (start at docs/index.html), CSV templates, ONBOARDING.md
 ```

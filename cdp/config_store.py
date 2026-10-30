@@ -132,6 +132,25 @@ def mapping_preview(tenant: dict, source: dict, source_type: dict, raw: pd.DataF
         con.close()
 
 
+def save_ai_settings(settings: dict, user: str = "admin") -> None:
+    """Save the AI assistant provider settings (never the key: that lives in the credential store)."""
+    from cdp.llm import PROVIDERS
+    provider = settings.get("provider")
+    problems = []
+    if provider not in PROVIDERS:
+        problems.append(f"Choose a provider: {', '.join(PROVIDERS)}")
+    else:
+        if not (settings.get("model") or PROVIDERS[provider]["default_model"]):
+            problems.append("Enter the model" + (" (deployment) name." if provider == "azure_openai" else " name."))
+        base = settings.get("base_url", "")
+        if PROVIDERS[provider]["needs_base_url"] and not re.match(r"^https?://", base):
+            problems.append("Enter the endpoint / base URL, starting with https:// (or http:// for a local server).")
+    if problems:
+        raise ConfigError(problems)
+    clean = {k: settings.get(k) for k in ("provider", "model", "base_url", "api_version", "share_result_rows")}
+    _write(CONFIG_DIR / "ai.json", clean, user, "save AI settings")
+
+
 def audit_log(limit: int = 200) -> list[dict]:
     path = HISTORY_DIR / "audit.log"
     if not path.exists():

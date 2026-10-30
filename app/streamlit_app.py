@@ -40,6 +40,7 @@ pages = {
         st.Page("views/admin_clients.py", title="Clients", icon=":material/apartment:"),
         st.Page("views/admin_sources.py", title="Sources & connections", icon=":material/cable:"),
         st.Page("views/admin_mappings.py", title="Mappings", icon=":material/schema:"),
+        st.Page("views/admin_ai.py", title="AI assistant", icon=":material/smart_toy:"),
         st.Page("views/admin_credentials.py", title="Credentials & history", icon=":material/key:"),
     ],
 }

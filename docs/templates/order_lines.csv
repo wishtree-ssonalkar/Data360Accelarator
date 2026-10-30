@@ -1,0 +1,3 @@
+line_id,order_id,sku,quantity,line_amount
+SO-50001-1,SO-50001,RUN-0101,1,3999.00
+SO-50001-2,SO-50001,ACC-0705,2,600.00

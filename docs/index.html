@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WishUnify Overview</title>
+<meta name="description" content="WishUnify, the customer data platform accelerator by Wishtree Technologies: what it is, what it does and who it is for.">
+<link rel="stylesheet" href="assets/docs.css">
+<script src="assets/docs.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">WU</div><div class="brand-name">WishUnify</div></div>
+  <p class="brand-sub">Documentation · Wishtree Technologies</p>
+  <nav class="nav">
+    <div class="nav-group">Start here</div>
+    <a href="index.html" aria-current="page">Overview</a>
+    <a href="use-cases.html">Who it's for &amp; examples</a>
+    <div class="nav-group">Understand</div>
+    <a href="architecture.html">Architecture</a>
+    <a href="data-requirements.html">Data requirements</a>
+    <div class="nav-group">Set up &amp; use</div>
+    <a href="prerequisites.html">Prerequisites &amp; installation</a>
+    <a href="user-guide.html">User guide</a>
+    <a href="admin-guide.html">Admin &amp; onboarding guide</a>
+    <div class="nav-group">Reference</div>
+    <a href="faq.html">FAQ, glossary &amp; limits</a>
+  </nav>
+  <button class="theme-toggle" type="button">Theme: system</button>
+</aside>
+
+<main><div class="content">
+  <header class="page-head">
+    <div class="eyebrow">Overview</div>
+    <h1>WishUnify: one view of every customer</h1>
+    <p class="lead">WishUnify is Wishtree's customer data platform (CDP) accelerator. It connects a business's
+      customer data from all its systems, works out which records belong to the same person, and turns them
+      into a single profile per customer, ready-made analytics and plain-English answers.</p>
+  </header>
+
+  <div class="toc"><strong>On this page</strong><ol>
+    <li><a href="#problem">The problem</a></li>
+    <li><a href="#what">What WishUnify does</a></li>
+    <li><a href="#capabilities">Six capabilities</a></li>
+    <li><a href="#value">Business value</a></li>
+    <li><a href="#how">How it works in one minute</a></li>
+    <li><a href="#different">What makes it different</a></li>
+    <li><a href="#included">What is included</a></li>
+    <li><a href="#docs">Where to go next</a></li>
+  </ol></div>
+
+  <h2 id="problem">The problem</h2>
+  <p>Most businesses already have plenty of customer data, but it is scattered:</p>
+  <ul>
+    <li>The <strong>online store</strong> knows the orders.</li>
+    <li>The <strong>CRM</strong> knows contact details and where the lead came from.</li>
+    <li>The <strong>store billing (POS)</strong> knows walk-in purchases, often only by phone number.</li>
+    <li>The <strong>support desk</strong> knows complaints and satisfaction scores.</li>
+    <li>The <strong>website / app</strong> knows browsing and abandoned carts.</li>
+  </ul>
+  <p>The same person appears as <code>RIYA.SHARMA@GMAIL.COM</code> in one system, "Riya S." with phone
+    <code>098765-43210</code> in another, and only a phone number on a store receipt. Nobody can easily answer
+    <em>"Who are our best customers, who is about to leave, and what should we do about it?"</em></p>
+  <p>Buying a commercial CDP (Salesforce Data Cloud, Adobe Real-Time CDP, Segment) solves this but is expensive,
+    rigid and slow to customize. Building one from scratch for every client takes months.</p>
+
+  <h2 id="what">What WishUnify does</h2>
+  <p>WishUnify is a <strong>ready-made, configurable foundation</strong> that Wishtree installs for a client in days
+    or weeks instead of months. It:</p>
+  <ol>
+    <li><strong>Connects</strong> to the client's systems: files, cloud storage, databases and APIs.</li>
+    <li><strong>Standardizes</strong> every source into one common customer data model.</li>
+    <li><strong>Matches</strong> records across systems into one customer (by customer id, email and phone).</li>
+    <li><strong>Builds a Customer 360 profile</strong> for every person: lifetime spend, orders, favourite category,
+      support history, website activity, segment, tier and churn risk.</li>
+    <li><strong>Provides analytics</strong>: revenue, segments, retention cohorts, conversion funnel, product performance.</li>
+    <li><strong>Answers questions in plain English</strong> through an AI assistant that writes the SQL and draws the chart.</li>
+  </ol>
+
+  <h2 id="capabilities">Six capabilities</h2>
+  <div class="cards">
+    <div class="card"><div class="num">01</div><h3>Connect any source</h3><p>CSV, Excel, JSON, Parquet, S3, Azure Blob, Google Cloud Storage, SQL Server, Oracle, PostgreSQL, MySQL, REST APIs. Full or incremental loads.</p></div>
+    <div class="card"><div class="num">02</div><h3>Shape data around the business</h3><p>Each system is mapped to a standard model of customers, orders, products, events and tickets. Mappings are built in the UI with dropdowns.</p></div>
+    <div class="card"><div class="num">03</div><h3>Customer 360 profiles</h3><p>One golden record per person with RFM scores, 11 named segments, Platinum/Gold/Silver/Bronze tiers and churn risk.</p></div>
+    <div class="card"><div class="num">04</div><h3>Ready-made analytics</h3><p>Executive overview, retention cohorts, conversion funnel, product and refund analysis, campaign audience builder.</p></div>
+    <div class="card"><div class="num">05</div><h3>Ask in plain English</h3><p>"Which Gold customers in Pune haven't ordered in 90 days?" The assistant answers with a chart, data and a short summary.</p></div>
+    <div class="card"><div class="num">06</div><h3>Multi-client</h3><p>Each client or business unit has separate data, sources and business rules in one installation.</p></div>
+  </div>
+
+  <h2 id="value">Business value</h2>
+  <div class="table-wrap"><table>
+    <tr><th>For</th><th>What they get</th></tr>
+    <tr><td>Marketing</td><td>Ready audiences (e.g. "At Risk Gold customers in Mumbai who opted in") exported as CSV for campaigns; segment sizes and value.</td></tr>
+    <tr><td>Retention / CRM</td><td>Who is about to leave, their usual purchase gap, and a suggested next-best action per customer.</td></tr>
+    <tr><td>Customer experience</td><td>One screen with a customer's full history (orders, complaints, website visits) before they call.</td></tr>
+    <tr><td>Leadership</td><td>Revenue trend by channel, repeat rate, active customers, value at risk, all on one page.</td></tr>
+    <tr><td>Merchandising</td><td>Best sellers, margins, and problem products with high refunds and complaints.</td></tr>
+    <tr><td>Data / IT team</td><td>A clean, documented customer data model instead of one-off reports; config-driven onboarding of new systems.</td></tr>
+  </table></div>
+  <p>In short: <strong>know every customer, keep the valuable ones, sell more to them</strong>, without a large
+    platform licence and without months of custom engineering.</p>
+
+  <h2 id="how">How it works in one minute</h2>
+  <figure class="diagram">
+    <svg viewBox="0 0 860 210" role="img" aria-label="Data flows from source systems through Connect, Map, Match and Customer 360 into dashboards and the AI assistant">
+      <defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="d-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+      <rect class="d-box" x="10" y="20" width="130" height="170" rx="10"/>
+      <text class="d-text" x="75" y="44" text-anchor="middle">Client systems</text>
+      <text class="d-sub" x="75" y="70" text-anchor="middle">Online store</text>
+      <text class="d-sub" x="75" y="92" text-anchor="middle">CRM</text>
+      <text class="d-sub" x="75" y="114" text-anchor="middle">Store POS</text>
+      <text class="d-sub" x="75" y="136" text-anchor="middle">Support desk</text>
+      <text class="d-sub" x="75" y="158" text-anchor="middle">Website / app</text>
+      <text class="d-sub" x="75" y="180" text-anchor="middle">Databases, APIs</text>
+      <rect class="d-bronze" x="180" y="70" width="120" height="70" rx="10"/>
+      <text class="d-text" x="240" y="100" text-anchor="middle">1. Connect</text>
+      <text class="d-sub" x="240" y="120" text-anchor="middle">raw copy</text>
+      <rect class="d-silver" x="330" y="70" width="120" height="70" rx="10"/>
+      <text class="d-text" x="390" y="100" text-anchor="middle">2. Map</text>
+      <text class="d-sub" x="390" y="120" text-anchor="middle">standard format</text>
+      <rect class="d-silver" x="480" y="70" width="120" height="70" rx="10"/>
+      <text class="d-text" x="540" y="100" text-anchor="middle">3. Match</text>
+      <text class="d-sub" x="540" y="120" text-anchor="middle">one customer</text>
+      <rect class="d-gold" x="630" y="70" width="110" height="70" rx="10"/>
+      <text class="d-text" x="685" y="100" text-anchor="middle">4. Customer</text>
+      <text class="d-text" x="685" y="118" text-anchor="middle">360</text>
+      <rect class="d-accent" x="770" y="30" width="80" height="60" rx="10"/>
+      <text class="d-text" x="810" y="65" text-anchor="middle">Reports</text>
+      <rect class="d-accent" x="770" y="120" width="80" height="60" rx="10"/>
+      <text class="d-text" x="810" y="148" text-anchor="middle">Ask AI</text>
+      <text class="d-sub" x="810" y="166" text-anchor="middle">in English</text>
+      <path class="d-line" d="M140 105 H178" marker-end="url(#a1)"/>
+      <path class="d-line" d="M300 105 H328" marker-end="url(#a1)"/>
+      <path class="d-line" d="M450 105 H478" marker-end="url(#a1)"/>
+      <path class="d-line" d="M600 105 H628" marker-end="url(#a1)"/>
+      <path class="d-line" d="M740 95 L768 65" marker-end="url(#a1)"/>
+      <path class="d-line" d="M740 115 L768 145" marker-end="url(#a1)"/>
+    </svg>
+    <figcaption>Every refresh runs these steps automatically, on a schedule or with one click on "Run now".</figcaption>
+  </figure>
+
+  <h2 id="different">What makes it different</h2>
+  <div class="table-wrap"><table>
+    <tr><th></th><th>Commercial CDP (e.g. Salesforce, Adobe)</th><th>Build from scratch</th><th>WishUnify</th></tr>
+    <tr><td>Cost</td><td>High annual licence</td><td>High engineering cost</td><td><span class="badge good">Low</span> open-source stack, no licence</td></tr>
+    <tr><td>Time to first insights</td><td>Months</td><td>Months</td><td><span class="badge good">Days–weeks</span></td></tr>
+    <tr><td>Customization</td><td>Limited to the vendor's schema</td><td>Unlimited</td><td>Config-driven: mappings, rules, sources</td></tr>
+    <tr><td>Data ownership</td><td>In the vendor's cloud</td><td>Client owns</td><td>Client owns; runs in the client's environment</td></tr>
+    <tr><td>Adding a new system</td><td>Vendor connector or project</td><td>Code</td><td>Mapping screen + Test connection</td></tr>
+    <tr><td>AI questions</td><td>Add-on</td><td>Build it</td><td>Included: Claude, Gemini, OpenAI, Azure OpenAI or compatible</td></tr>
+  </table></div>
+
+  <h2 id="included">What is included</h2>
+  <ul>
+    <li><strong>Pipeline engine</strong>: connectors, mapping engine, identity resolution, SQL models, data-quality checks, run history.</li>
+    <li><strong>Web app</strong>: 8 business pages plus 4 admin pages (clients, sources and connections, mappings, credentials and history).</li>
+    <li><strong>AI assistant</strong> that works with Anthropic Claude, Google Gemini, OpenAI, Azure OpenAI or any OpenAI-compatible service, chosen in the admin screens.</li>
+    <li><strong>Operations</strong>: command-line tool, scheduler, Docker image, docker-compose, CI workflow, automated tests.</li>
+    <li><strong>Sample data</strong> for two fictional businesses (Stride Footwear, UrbanLeaf Home) for demos.</li>
+  </ul>
+
+  <div class="callout info"><strong>Name and branding</strong>The product name, tagline and company shown in the app
+    are set in one place (<code>config/platform.json</code> → <code>branding</code>), so the accelerator can be
+    renamed or white-labelled for a client without code changes.</div>
+
+  <h2 id="docs">Where to go next</h2>
+  <div class="cards">
+    <a class="card" href="use-cases.html"><h4>Who it's for &amp; examples</h4><p>Personas, target clients, real-world scenarios, demo script.</p></a>
+    <a class="card" href="architecture.html"><h4>Architecture</h4><p>Layers, components, data flow, security, tech stack.</p></a>
+    <a class="card" href="data-requirements.html"><h4>Data requirements</h4><p>What data a client needs to provide, minimum and recommended.</p></a>
+    <a class="card" href="prerequisites.html"><h4>Prerequisites &amp; installation</h4><p>What you need, local setup and server deployment.</p></a>
+    <a class="card" href="user-guide.html"><h4>User guide</h4><p>Every screen explained for business users.</p></a>
+    <a class="card" href="admin-guide.html"><h4>Admin &amp; onboarding</h4><p>Onboard a client step by step, from the UI.</p></a>
+    <a class="card" href="faq.html"><h4>FAQ, glossary &amp; limits</h4><p>Common questions, terms, known limitations, roadmap.</p></a>
+  </div>
+
+  <nav class="page-nav"><span></span><a href="use-cases.html">Who it's for &amp; examples →</a></nav>
+  <footer class="doc-footer">WishUnify · Customer Data Platform accelerator · Wishtree Technologies</footer>
+</div></main>
+</body>
+</html>

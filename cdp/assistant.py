@@ -10,19 +10,15 @@ Safety model
 from __future__ import annotations
 
 import json
-import os
 import re
-import urllib.error
-import urllib.request
 from dataclasses import dataclass, field
 
-import anthropic
 import duckdb
 import pandas as pd
 
+from cdp import llm
 from cdp.config import AS_OF_DATE, WAREHOUSE_PATH, brand
 
-MODEL = "claude-opus-5-5"
 MAX_ROWS = 500
 
 TABLE_DOCS = {
@@ -150,29 +146,16 @@ def run_sql(con: duckdb.DuckDBPyConnection, sql: str) -> pd.DataFrame:
     return con.cursor().execute(f"SELECT * FROM ({cleaned}) LIMIT {MAX_ROWS}").df()
 
 
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-flash-latest")
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-
-
-def provider() -> str | None:
-    """Which LLM answers questions: CDP_AI_PROVIDER if set, else Claude, else Gemini, by available keys."""
-    has_claude = bool(os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN")
-                      or os.environ.get("ANTHROPIC_PROFILE"))
-    has_gemini = bool(os.environ.get("GEMINI_API_KEY"))
-    wanted = os.environ.get("CDP_AI_PROVIDER", "").lower()
-    if wanted == "gemini" and has_gemini:
-        return "gemini"
-    if wanted == "claude" and has_claude:
-        return "claude"
-    return "claude" if has_claude else ("gemini" if has_gemini else None)
-
-
 def provider_label() -> str:
-    return {"claude": f"Claude ({MODEL})", "gemini": f"Gemini ({GEMINI_MODEL})"}.get(provider(), "none")
+    return llm.label()
 
 
 def has_credentials() -> bool:
-    return provider() is not None
+    return llm.is_configured()
+
+
+def shares_result_rows() -> bool:
+    return bool(llm.load_settings().get("share_result_rows", True))
 
 
 def _system_prompt(tenant_name: str, schema: str) -> str:
@@ -194,60 +177,8 @@ def _system_prompt(tenant_name: str, schema: str) -> str:
     )
 
 
-def _claude(system: str, messages: list[dict], max_tokens: int, effort: str, schema: dict | None) -> str:
-    output_config = {"effort": effort}
-    if schema:
-        output_config["format"] = {"type": "json_schema", "schema": schema}
-    try:
-        response = anthropic.Anthropic().beta.messages.create(
-            model=MODEL,
-            max_tokens=max_tokens,
-            system=system,
-            messages=messages,
-            output_config=output_config,
-            betas=["server-side-fallback-2026-07-01"],
-            fallbacks="default",
-            cache_control={"type": "ephemeral"},
-        )
-    except (anthropic.APIConnectionError, anthropic.AuthenticationError, anthropic.PermissionDeniedError) as exc:
-        raise RuntimeError(f"Could not reach Claude: {exc}") from exc
-    except anthropic.APIStatusError as exc:
-        raise RuntimeError(f"Claude API error ({exc.status_code}): {exc.message}") from exc
-    if response.stop_reason == "refusal":
-        raise RuntimeError("The model declined to answer this question.")
-    return "".join(b.text for b in response.content if b.type == "text")
-
-
-def _gemini(system: str, messages: list[dict], max_tokens: int, effort: str, schema: dict | None) -> str:
-    body = {
-        "systemInstruction": {"parts": [{"text": system}]},
-        "contents": [{"role": "model" if m["role"] == "assistant" else "user", "parts": [{"text": m["content"]}]}
-                     for m in messages],
-        "generationConfig": {"maxOutputTokens": max_tokens},
-    }
-    if schema:
-        body["generationConfig"].update({"responseMimeType": "application/json", "responseJsonSchema": schema})
-    request = urllib.request.Request(
-        GEMINI_URL.format(model=GEMINI_MODEL), data=json.dumps(body).encode("utf-8"), method="POST",
-        headers={"Content-Type": "application/json", "x-goog-api-key": os.environ["GEMINI_API_KEY"]})
-    try:
-        with urllib.request.urlopen(request, timeout=120) as resp:
-            data = json.load(resp)
-    except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", "replace")[:300]
-        raise RuntimeError(f"Gemini API error ({exc.code}): {detail}") from exc
-    except urllib.error.URLError as exc:
-        raise RuntimeError(f"Could not reach Gemini: {exc.reason}") from exc
-    candidates = data.get("candidates") or []
-    if not candidates or not candidates[0].get("content"):
-        reason = (candidates[0].get("finishReason") if candidates else None) or data.get("promptFeedback")
-        raise RuntimeError(f"Gemini returned no answer ({reason}).")
-    return "".join(p.get("text", "") for p in candidates[0]["content"].get("parts", []))
-
-
 def _complete(system: str, messages: list[dict], max_tokens: int, effort: str, schema: dict | None = None) -> str:
-    backend = _gemini if provider() == "gemini" else _claude
-    return backend(system, messages, max_tokens, effort, schema)
+    return llm.complete(system, messages, max_tokens=max_tokens, effort=effort, schema=schema)
 
 
 def ask(con: duckdb.DuckDBPyConnection, tenant_name: str, schema: str, question: str,
@@ -260,7 +191,7 @@ def ask(con: duckdb.DuckDBPyConnection, tenant_name: str, schema: str, question:
     for attempt in range(2):
         try:
             raw = _complete(system, messages, max_tokens=4000, effort="medium", schema=ANSWER_SCHEMA)
-            plan = json.loads(raw)
+            plan = llm.parse_json(raw)
         except (RuntimeError, json.JSONDecodeError) as exc:
             answer.error = str(exc)
             return answer
@@ -278,7 +209,7 @@ def ask(con: duckdb.DuckDBPyConnection, tenant_name: str, schema: str, question:
                 {"role": "user", "content": f"That query failed with this error:\n{exc}\nPlease return a corrected query."},
             ]
 
-    if answer.data is not None and summarize and len(answer.data):
+    if answer.data is not None and summarize and shares_result_rows() and len(answer.data):
         try:
             preview = answer.data.head(30).to_csv(index=False)
             answer.summary = _complete(

@@ -1,0 +1,3 @@
+sku,product_name,category,list_price,unit_cost,launched_on,is_active
+RUN-0101,Aero Running Pro,Running Shoes,3999,2100,2025-03-01,true
+ACC-0705,Sport Socks (3 pack),Accessories,300,110,2024-06-15,true

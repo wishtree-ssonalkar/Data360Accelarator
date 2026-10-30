@@ -1,0 +1,26 @@
+{
+  "description": "WishUnify standard template for customers (docs/templates/customers.csv). Columns already use the standard names, so no mapping work is needed.",
+  "system": "Standard template",
+  "read": {
+    "format": "csv"
+  },
+  "outputs": [
+    {
+      "entity": "customers",
+      "columns": {
+        "source_key": "nullif(trim(\"source_key\"), '')",
+        "email": "nullif(trim(\"email\"), '')",
+        "phone": "nullif(trim(\"phone\"), '')",
+        "first_name": "nullif(trim(\"first_name\"), '')",
+        "last_name": "nullif(trim(\"last_name\"), '')",
+        "full_name": "nullif(trim(\"full_name\"), '')",
+        "city": "nullif(trim(\"city\"), '')",
+        "region": "nullif(trim(\"region\"), '')",
+        "lead_source": "nullif(trim(\"lead_source\"), '')",
+        "accepts_marketing": "lower(trim(nullif(trim(\"accepts_marketing\"), ''))) IN ('true','yes','y','1')",
+        "created_at": "TRY_CAST(nullif(trim(\"created_at\"), '') AS TIMESTAMP)"
+      },
+      "namespace": "standard"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "description": "WishUnify standard template for orders (docs/templates/orders.csv). Columns already use the standard names, so no mapping work is needed.",
+  "system": "Standard template",
+  "read": {
+    "format": "csv"
+  },
+  "outputs": [
+    {
+      "entity": "orders",
+      "columns": {
+        "order_id": "nullif(trim(\"order_id\"), '')",
+        "customer_source_key": "nullif(trim(\"customer_source_key\"), '')",
+        "email": "nullif(trim(\"email\"), '')",
+        "phone": "nullif(trim(\"phone\"), '')",
+        "order_ts": "TRY_CAST(nullif(trim(\"order_ts\"), '') AS TIMESTAMP)",
+        "channel": "nullif(trim(\"channel\"), '')",
+        "store_code": "nullif(trim(\"store_code\"), '')",
+        "status": "lower(trim(\"status\"))",
+        "order_value": "TRY_CAST(nullif(trim(\"order_value\"), '') AS DECIMAL(14,2))"
+      },
+      "customer_namespace": "standard"
+    }
+  ]
+}

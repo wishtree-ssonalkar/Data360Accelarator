@@ -27,9 +27,13 @@ with st.sidebar:
     if online:
         st.success(f"Connected: {assistant.provider_label()}", icon=":material/check_circle:")
     else:
-        st.warning("No AI key found. Set `ANTHROPIC_API_KEY` or `GEMINI_API_KEY` to ask free-form questions; the "
-                   "example questions below still work offline.", icon=":material/key_off:")
-    summarize = st.toggle("Add AI summary to answers", value=True, disabled=not online)
+        st.warning("The AI assistant is not set up. An administrator can choose a provider (Claude, Gemini, OpenAI, "
+                   "Azure OpenAI or compatible) and add its key under **Admin > AI assistant**. The example "
+                   "questions below still work.", icon=":material/key_off:")
+    can_summarize = online and assistant.shares_result_rows()
+    summarize = st.toggle("Add AI summary to answers", value=can_summarize, disabled=not can_summarize,
+                          help=None if can_summarize else "Summaries are off because sending result rows to the AI "
+                                                          "provider is disabled in Admin > AI assistant.")
     if st.button("Clear conversation", icon=":material/delete_sweep:", disabled=not chat):
         st.session_state[history_key] = []
         st.rerun()
@@ -113,8 +117,8 @@ if question:
         elif question in assistant.EXAMPLES:
             answer = assistant.example_answer(con, question)
         else:
-            answer = assistant.Answer(question=question, error="Free-form questions need an AI key "
-                                                               "(ANTHROPIC_API_KEY or GEMINI_API_KEY). Pick an "
-                                                               "example question instead.")
+            answer = assistant.Answer(question=question, error="Free-form questions need an AI provider: ask an "
+                                                               "administrator to set one up under Admin > AI "
+                                                               "assistant. Pick an example question instead.")
         render(answer)
     chat.append(answer)

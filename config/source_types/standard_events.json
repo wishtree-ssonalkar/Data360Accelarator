@@ -1,0 +1,25 @@
+{
+  "description": "WishUnify standard template for events (docs/templates/events.csv). Columns already use the standard names, so no mapping work is needed.",
+  "system": "Standard template",
+  "read": {
+    "format": "csv"
+  },
+  "outputs": [
+    {
+      "entity": "events",
+      "columns": {
+        "event_id": "nullif(trim(\"event_id\"), '')",
+        "event_type": "nullif(trim(\"event_type\"), '')",
+        "event_ts": "TRY_CAST(nullif(trim(\"event_ts\"), '') AS TIMESTAMP)",
+        "email": "nullif(trim(\"email\"), '')",
+        "phone": "nullif(trim(\"phone\"), '')",
+        "customer_source_key": "nullif(trim(\"customer_source_key\"), '')",
+        "session_id": "nullif(trim(\"session_id\"), '')",
+        "device": "nullif(trim(\"device\"), '')",
+        "sku": "nullif(trim(\"sku\"), '')",
+        "order_id": "nullif(trim(\"order_id\"), '')"
+      },
+      "customer_namespace": "standard"
+    }
+  ]
+}

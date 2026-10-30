@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WishUnify User Guide</title>
+<meta name="description" content="How business users work with WishUnify: every screen explained, with tips, example questions and weekly routines.">
+<link rel="stylesheet" href="assets/docs.css">
+<script src="assets/docs.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">WU</div><div class="brand-name">WishUnify</div></div>
+  <p class="brand-sub">Documentation · Wishtree Technologies</p>
+  <nav class="nav">
+    <div class="nav-group">Start here</div>
+    <a href="index.html">Overview</a>
+    <a href="use-cases.html">Who it's for &amp; examples</a>
+    <div class="nav-group">Understand</div>
+    <a href="architecture.html">Architecture</a>
+    <a href="data-requirements.html">Data requirements</a>
+    <div class="nav-group">Set up &amp; use</div>
+    <a href="prerequisites.html">Prerequisites &amp; installation</a>
+    <a href="user-guide.html" aria-current="page">User guide</a>
+    <a href="admin-guide.html">Admin &amp; onboarding guide</a>
+    <div class="nav-group">Reference</div>
+    <a href="faq.html">FAQ, glossary &amp; limits</a>
+  </nav>
+  <button class="theme-toggle" type="button">Theme: system</button>
+</aside>
+
+<main><div class="content">
+  <header class="page-head">
+    <div class="eyebrow">Use</div>
+    <h1>User guide</h1>
+    <p class="lead">For marketing, CRM, customer-experience, merchandising and leadership users. Every screen is
+      explained: what it shows, how to use it, and what to do with it.</p>
+  </header>
+
+  <div class="toc"><strong>On this page</strong><ol>
+    <li><a href="#start">Getting started</a></li>
+    <li><a href="#overview">Executive overview</a></li>
+    <li><a href="#c360">Customer 360</a></li>
+    <li><a href="#segments">Segments &amp; RFM</a></li>
+    <li><a href="#retention">Retention &amp; churn</a></li>
+    <li><a href="#funnel">Conversion funnel</a></li>
+    <li><a href="#products">Product performance</a></li>
+    <li><a href="#ask">Ask your data (AI)</a></li>
+    <li><a href="#pipeline">Data pipeline</a></li>
+    <li><a href="#playbook">Segment playbook</a></li>
+    <li><a href="#routines">Weekly routines</a></li>
+  </ol></div>
+
+  <h2 id="start">Getting started</h2>
+  <ol class="steps">
+    <li><strong>Open the app</strong>Use the link from your administrator (for a local demo: <code>http://localhost:8501</code>).</li>
+    <li><strong>Pick the business unit</strong>In the left sidebar, choose the business under <strong>Business unit</strong>. Every page then shows only that business's data.</li>
+    <li><strong>Check how fresh the data is</strong>The line under each page title shows "data as of" a date. The <strong>Data pipeline</strong> page shows when the last refresh ran.</li>
+    <li><strong>Navigate</strong>The menu is grouped: Overview, Customers, Analytics, AI, Platform and (for administrators) Admin.</li>
+  </ol>
+  <div class="callout info"><strong>Tips that work on every page</strong>
+    Hover over a chart to see exact values · click legend items to hide or show a series · use the icons above a table to
+    search, sort, expand to full screen or download it as CSV.</div>
+
+  <h2 id="overview">Executive overview</h2>
+  <p><strong>Answers:</strong> How is the business doing, and where should we act?</p>
+  <div class="table-wrap"><table>
+    <tr><th>Element</th><th>Meaning</th></tr>
+    <tr><td>Unified customer profiles</td><td>Number of real people after merging duplicates, and how many source records they came from.</td></tr>
+    <tr><td>Net revenue (last 12 months)</td><td>Completed orders only, with growth versus the 12 months before.</td></tr>
+    <tr><td>Active customers</td><td>Buyers who ordered within the "active" window set for the business.</td></tr>
+    <tr><td>Repeat purchase rate</td><td>Share of buyers with 2 or more orders.</td></tr>
+    <tr><td>Avg order value (12m)</td><td>Revenue ÷ orders over the last 12 months.</td></tr>
+    <tr><td>High-value revenue at risk</td><td>Lifetime spend of Gold/Platinum customers with high churn risk.</td></tr>
+    <tr><td>Charts</td><td>Revenue by channel over time · buyers by segment · new vs returning revenue · revenue by tier · customers by lifecycle stage.</td></tr>
+    <tr><td>Who needs attention this week</td><td>Top Gold/Platinum customers who are slipping away or have open complaints. Start calls here.</td></tr>
+  </table></div>
+
+  <h2 id="c360">Customer 360</h2>
+  <p><strong>Answers:</strong> Everything we know about one customer, from every system.</p>
+  <ol class="steps">
+    <li><strong>Search</strong>Type a name, email, phone or customer id. Partial text works ("Riya", "98765", "@gmail").</li>
+    <li><strong>Pick the person</strong>Choose from the list (sorted by lifetime spend).</li>
+    <li><strong>Read the header</strong>Tier, RFM segment, lifecycle stage, churn risk, marketing consent, the systems this person appears in, and a <strong>Next best action</strong>.</li>
+    <li><strong>Check the numbers</strong>Lifetime revenue, orders (and refunds), average order value, days since last order, RFM score, support tickets, recent web sessions and abandoned carts.</li>
+    <li><strong>Explore the tabs</strong><em>Timeline</em> (everything, newest first) · <em>Orders</em> (items and spend by category) · <em>Support</em> · <em>Web &amp; app</em> · <em>Source records</em> (the original records merged into this profile, so you can see why they were matched).</li>
+  </ol>
+  <div class="callout tip"><strong>Use it before a call</strong>Support and sales teams can see a customer's recent orders,
+    refunds and open complaints in one place before calling back.</div>
+
+  <h2 id="segments">Segments &amp; RFM</h2>
+  <p><strong>Answers:</strong> What kinds of customers do we have, and who should a campaign target?</p>
+  <ul>
+    <li><strong>Segment map:</strong> each box is a segment; size = number of customers. Hover for revenue.</li>
+    <li><strong>RFM grid:</strong> customers by recency (left to right, 5 = most recent) and frequency (bottom to top). Top-right = best customers; top-left = valuable customers who have gone quiet.</li>
+    <li><strong>Segment table:</strong> customers, lifetime revenue, revenue share, average days since order, average orders, and how many have marketing consent.</li>
+  </ul>
+  <h3>Build and export an audience</h3>
+  <ol class="steps">
+    <li><strong>Choose segments</strong>e.g. "At Risk" and "Cannot Lose Them".</li>
+    <li><strong>Narrow it down</strong>By tier and city. Keep <strong>Only marketing opt-ins</strong> on for promotional messages.</li>
+    <li><strong>Check the size and value</strong>Audience size, their lifetime revenue and their most common favourite category.</li>
+    <li><strong>Export</strong>Click <strong>Export audience (CSV)</strong> and load the file into your email, SMS, WhatsApp or ads tool.</li>
+  </ol>
+
+  <h2 id="retention">Retention &amp; churn</h2>
+  <p><strong>Answers:</strong> Do customers come back, and who is about to leave?</p>
+  <ul>
+    <li><strong>Headline numbers:</strong> repeat rate, median days between orders, share who came back within 3 months, high-risk customers and their value, churned share.</li>
+    <li><strong>Cohort grid:</strong> each row is the month customers first bought; each column is months later; the cell is the % who bought again that month. Darker = better. Compare rows to see whether retention is improving.</li>
+    <li><strong>Churn risk by tier</strong> and <strong>days since last order</strong> histogram.</li>
+    <li><strong>Win-back list:</strong> valuable customers at high risk, with their usual gap between orders. Hand it to the retention team.</li>
+  </ul>
+
+  <h2 id="funnel">Conversion funnel</h2>
+  <p><strong>Answers:</strong> Where do website and app visitors drop off?</p>
+  <ul>
+    <li>Choose the <strong>period</strong> with the slider and the <strong>devices</strong> to include.</li>
+    <li>Read the <strong>funnel</strong>: visited → viewed a product → added to cart → started checkout → purchased.</li>
+    <li>Key rates: conversion, cart abandonment, checkout completion, and the share of visits linked to a known customer.</li>
+    <li>The <strong>trend by device</strong> shows whether, for example, the mobile site converts worse than the app.</li>
+  </ul>
+  <p class="badge">Needs website/app event data</p>
+
+  <h2 id="products">Product performance</h2>
+  <p><strong>Answers:</strong> What sells, what earns, and what causes problems?</p>
+  <ul>
+    <li>Filter by <strong>category</strong>.</li>
+    <li>Revenue and margin by category; top 12 products by revenue.</li>
+    <li><strong>Problem products</strong> chart: refund rate against number of support tickets, with bubble size = revenue. Products in the top-right are returned often <em>and</em> complained about: check sizing, photos, packaging or the supplier.</li>
+    <li>Full product table with units, buyers, margin %, refund rate, tickets, CSAT, views and add-to-carts.</li>
+  </ul>
+
+  <h2 id="ask">Ask your data (AI)</h2>
+  <p>Ask a question in plain English; the assistant writes the database query, runs it on this business's data and shows
+    a chart, a short summary and the data.</p>
+  <h3>Good questions to try</h3>
+  <ul>
+    <li class="q">Who are my top 20 customers by lifetime revenue?</li>
+    <li class="q">Which Gold or Platinum customers in Pune haven't ordered in 90 days?</li>
+    <li class="q">Show monthly revenue for the last 12 months by channel.</li>
+    <li class="q">Which cities have the most At Risk customers, and how much are they worth?</li>
+    <li class="q">What is the average order value by channel this year?</li>
+    <li class="q">Which products have the highest refund rate and the most complaints?</li>
+    <li class="q">How many new customers did we get each month this year?</li>
+    <li class="q">Compare the 3-month repeat rate of customers acquired in January versus June.</li>
+  </ul>
+  <h3>Tips</h3>
+  <ul>
+    <li>Be specific about time ("last 6 months"), place ("in Mumbai") and measure ("by revenue").</li>
+    <li>Ask follow-ups: "now only for the app channel", "show it as a table".</li>
+    <li>Open <strong>How this was answered</strong> to see the SQL query. Analysts can check or reuse it.</li>
+    <li>The example question buttons work even when no AI provider is configured. The sidebar shows which provider and model are answering.</li>
+    <li>Use <strong>Clear conversation</strong> in the sidebar to start a new topic.</li>
+  </ul>
+  <div class="callout warn"><strong>Check important numbers</strong>The assistant is usually right, but like any AI it can
+    misread a question. For decisions, check the query under "How this was answered" or confirm on the matching dashboard.</div>
+
+  <h2 id="pipeline">Data pipeline</h2>
+  <p>Mostly for administrators, but useful to everyone to check that data is fresh and complete:</p>
+  <ul>
+    <li><strong>Last pipeline run</strong> and status; how many sources are connected and failing.</li>
+    <li>Tabs: Architecture &amp; lineage · Sources (last load and errors) · Run history · Identity resolution (how many duplicates were merged) · Data quality · Business rules.</li>
+    <li>Administrators can start a refresh with <strong>Run now</strong>; the page updates when it finishes.</li>
+  </ul>
+
+  <h2 id="playbook">Segment playbook</h2>
+  <p>The same suggestions appear as "Next best action" on each Customer 360 profile.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Segment</th><th>Who they are</th><th>Suggested action</th></tr>
+    <tr><td>Champion</td><td>Bought recently and often, spend the most</td><td>Reward: VIP early access, ask for reviews and referrals.</td></tr>
+    <tr><td>Loyal</td><td>Buy regularly</td><td>Upsell premium items in their favourite category.</td></tr>
+    <tr><td>Potential Loyalist</td><td>Recent, a few orders</td><td>Nurture with a membership or loyalty offer.</td></tr>
+    <tr><td>New Customer</td><td>First order in the last 60 days</td><td>Welcome series and a second-purchase incentive.</td></tr>
+    <tr><td>Promising</td><td>Recent, one order</td><td>Personalised recommendations based on the first purchase.</td></tr>
+    <tr><td>Needs Attention</td><td>Average recency, starting to slip</td><td>Limited-time offer before they lapse.</td></tr>
+    <tr><td>At Risk</td><td>Used to buy often, not recently</td><td>Win back: personal outreach plus a strong incentive.</td></tr>
+    <tr><td>Cannot Lose Them</td><td>Top spenders who have gone quiet</td><td>Urgent: call from the account team, resolve open issues.</td></tr>
+    <tr><td>Hibernating</td><td>Infrequent and not recent</td><td>Low-cost reactivation email with best sellers.</td></tr>
+    <tr><td>Lost</td><td>Long gone, low value</td><td>Exclude from paid campaigns; occasional newsletter only.</td></tr>
+    <tr><td>Prospect</td><td>Known contact, no purchase yet</td><td>First-order offer on products they browsed.</td></tr>
+  </table></div>
+
+  <h2 id="routines">Weekly routines</h2>
+  <div class="cards">
+    <div class="card"><h4>Leadership · Monday</h4><p>Executive overview: revenue trend, active customers, value at risk. Ask the AI one question about anything unusual.</p></div>
+    <div class="card"><h4>Retention · Weekly</h4><p>Retention page win-back list + "Who needs attention". Export the At Risk / Cannot Lose Them audience.</p></div>
+    <div class="card"><h4>Marketing · Per campaign</h4><p>Segments → build audience → export CSV. Compare segment sizes after the campaign.</p></div>
+    <div class="card"><h4>CX / Support · Daily</h4><p>Customer 360 before callbacks; open tickets on high-value customers.</p></div>
+    <div class="card"><h4>Merchandising · Monthly</h4><p>Problem products chart; margin by category; refund trends.</p></div>
+    <div class="card"><h4>Digital · Weekly</h4><p>Funnel by device; abandoned carts; conversion trend.</p></div>
+  </div>
+
+  <nav class="page-nav"><a href="prerequisites.html">← Prerequisites &amp; installation</a><a href="admin-guide.html">Admin &amp; onboarding guide →</a></nav>
+  <footer class="doc-footer">WishUnify · Customer Data Platform accelerator · Wishtree Technologies</footer>
+</div></main>
+</body>
+</html>

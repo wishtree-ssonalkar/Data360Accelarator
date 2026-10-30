@@ -1,0 +1,19 @@
+{
+  "description": "WishUnify standard template for order_lines (docs/templates/order_lines.csv). Columns already use the standard names, so no mapping work is needed.",
+  "system": "Standard template",
+  "read": {
+    "format": "csv"
+  },
+  "outputs": [
+    {
+      "entity": "order_lines",
+      "columns": {
+        "line_id": "nullif(trim(\"line_id\"), '')",
+        "order_id": "nullif(trim(\"order_id\"), '')",
+        "sku": "nullif(trim(\"sku\"), '')",
+        "quantity": "TRY_CAST(nullif(trim(\"quantity\"), '') AS INTEGER)",
+        "line_amount": "TRY_CAST(nullif(trim(\"line_amount\"), '') AS DECIMAL(14,2))"
+      }
+    }
+  ]
+}

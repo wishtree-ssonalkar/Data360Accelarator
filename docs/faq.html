@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WishUnify FAQ and Glossary</title>
+<meta name="description" content="Frequently asked questions about WishUnify, a glossary of terms, known limitations and the roadmap.">
+<link rel="stylesheet" href="assets/docs.css">
+<script src="assets/docs.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">WU</div><div class="brand-name">WishUnify</div></div>
+  <p class="brand-sub">Documentation · Wishtree Technologies</p>
+  <nav class="nav">
+    <div class="nav-group">Start here</div>
+    <a href="index.html">Overview</a>
+    <a href="use-cases.html">Who it's for &amp; examples</a>
+    <div class="nav-group">Understand</div>
+    <a href="architecture.html">Architecture</a>
+    <a href="data-requirements.html">Data requirements</a>
+    <div class="nav-group">Set up &amp; use</div>
+    <a href="prerequisites.html">Prerequisites &amp; installation</a>
+    <a href="user-guide.html">User guide</a>
+    <a href="admin-guide.html">Admin &amp; onboarding guide</a>
+    <div class="nav-group">Reference</div>
+    <a href="faq.html" aria-current="page">FAQ, glossary &amp; limits</a>
+  </nav>
+  <button class="theme-toggle" type="button">Theme: system</button>
+</aside>
+
+<main><div class="content">
+  <header class="page-head">
+    <div class="eyebrow">Reference</div>
+    <h1>FAQ, glossary &amp; limitations</h1>
+    <p class="lead">Answers to common questions from clients, users and delivery teams, the terms used across WishUnify,
+      and an honest list of what it does not do yet.</p>
+  </header>
+
+  <div class="toc"><strong>On this page</strong><ol>
+    <li><a href="#faq-business">FAQ: business</a></li>
+    <li><a href="#faq-data">FAQ: data</a></li>
+    <li><a href="#faq-tech">FAQ: technical &amp; security</a></li>
+    <li><a href="#glossary">Glossary</a></li>
+    <li><a href="#limits">Known limitations</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+  </ol></div>
+
+  <h2 id="faq-business">FAQ: business</h2>
+  <h4>Is WishUnify a product we sell or a project we deliver?</h4>
+  <p>It is an accelerator: a ready-made foundation that Wishtree installs and tailors for each client. The client gets
+    a working CDP in weeks; Wishtree delivers configuration, mappings, extensions and support as services.</p>
+  <h4>How long does onboarding a client take?</h4>
+  <p>Typically 3–4 weeks for 4–6 systems (see the <a href="admin-guide.html#playbook">implementation playbook</a>).
+    A demo on the sample data takes minutes; a proof of concept with one or two real exports can take a few days.</p>
+  <h4>Does the client need to buy any licences?</h4>
+  <p>No platform licence. The stack is open source. Costs are the server, and optionally an AI API key from whichever provider the client already uses (Claude, Gemini, OpenAI, Azure OpenAI or an
+    OpenAI-compatible service), charged by that provider, or a free local model via Ollama.</p>
+  <h4>Can it send campaigns?</h4>
+  <p>No. It builds audiences and exports them as CSV for the client's email, SMS, WhatsApp or ads tools. Direct
+    integrations are on the roadmap.</p>
+  <h4>Can we rename or white-label it?</h4>
+  <p>Yes. The product name, tagline and company are set in <code>config/platform.json</code> (<code>branding</code>).</p>
+  <h4>Can one installation serve several clients or brands?</h4>
+  <p>Yes. Each client (or brand / business unit) has separate sources, rules and data, chosen from the sidebar. For
+    strict separation between different companies, deploy one installation per client.</p>
+
+  <h2 id="faq-data">FAQ: data</h2>
+  <h4>What is the minimum data needed?</h4>
+  <p>Orders with an id, date, value, status, channel and a customer email, phone or id. See
+    <a href="data-requirements.html#minimum">Data requirements</a>.</p>
+  <h4>How does it know two records are the same person?</h4>
+  <p>Records sharing a normalized email, a normalized phone number, or a customer id that one system stores for another are
+    linked; each connected group is one customer. The Customer 360 "Source records" tab shows exactly which records were
+    merged and why.</p>
+  <h4>What if two people share a phone number (e.g. a family)?</h4>
+  <p>They are merged into one profile, which is usually acceptable for household-level marketing. Fuzzy and household-aware
+    matching is on the roadmap.</p>
+  <h4>What if the same customer has different names in two systems?</h4>
+  <p>The golden record takes each attribute from the most trusted source, set by the source's priority.</p>
+  <h4>How often is data refreshed?</h4>
+  <p>On a schedule (default every 6 hours on a server) or on demand with Run now. Incremental sources make frequent refreshes cheap.</p>
+  <h4>Why don't the revenue numbers match our finance report exactly?</h4>
+  <p>WishUnify counts completed orders only (refunded and cancelled are excluded), by order date, from the sources
+    connected. Differences usually come from returns timing, taxes/shipping inclusion, or sources not yet connected. Reconcile
+    during onboarding and adjust the mappings.</p>
+  <h4>What happens if a source fails during a refresh?</h4>
+  <p>The other sources still load, the failed one keeps its last good data, and the run is marked "partial" with the error
+    on the Data pipeline page.</p>
+  <h4>Can we delete a customer's data on request?</h4>
+  <p>Remove or exclude them in the source and refresh; derived tables are rebuilt each run. For incremental database or API
+    sources, also run a full refresh (<code>python -m cdp run --full-refresh</code>) so the old raw copy is replaced.</p>
+
+  <h2 id="faq-tech">FAQ: technical &amp; security</h2>
+  <h4>Where is the data stored?</h4>
+  <p>In one DuckDB database file on the server (<code>data/warehouse.duckdb</code>), organised in Bronze, Silver, Gold and
+    Meta layers. Uploaded files are under <code>data/sources/</code>. See <a href="architecture.html#layers">Architecture</a>.</p>
+  <h4>How much data can it handle?</h4>
+  <p>Tens of millions of rows on a single server. For more, the SQL models can be moved to Databricks, Snowflake or Fabric.</p>
+  <h4>Is the app slow while data refreshes?</h4>
+  <p>No. Refreshes build a separate copy and swap it in at the end; users keep seeing the previous data until then.</p>
+  <h4>Which AI providers are supported?</h4>
+  <p>Anthropic Claude, Google Gemini, OpenAI, Azure OpenAI, and any OpenAI-compatible service (Groq, Mistral, Together,
+    OpenRouter, DeepSeek, or a local Ollama server for fully on-premise use). An admin picks one under <strong>Admin → AI
+    assistant</strong>, enters the model and key, and clicks <strong>Test connection</strong>.</p>
+  <h4>What does the AI assistant send to the AI provider?</h4>
+  <p>Table and column descriptions, the client's category and city names, the user's question and, for the summary, up to 30
+    result rows. It never sends the whole database. The AI can only run read-only queries on a separate copy of one
+    client's final tables. An admin can switch off sending result rows (Admin → AI assistant), use a local model, or leave the assistant unconfigured.</p>
+  <h4>How are passwords and API tokens protected?</h4>
+  <p>Encrypted at rest with a key only the server holds (<code>CDP_SECRET_KEY</code>); never shown in the UI again; never
+    written into configuration files.</p>
+  <h4>Who can change the configuration?</h4>
+  <p>Only people with the admin password. Every change is validated, backed up and recorded with the user's name.</p>
+  <h4>Does it support single sign-on?</h4>
+  <p>Not built in yet. Put the app behind the organisation's SSO proxy; built-in SSO and roles are on the roadmap.</p>
+  <h4>Is it tested?</h4>
+  <p>Yes: an automated test suite covers file, database (incremental) and API sources, failure handling, identity
+    matching, the golden record, configuration validation, the admin back-end and AI query safety; CI runs it on each push.</p>
+
+  <h2 id="glossary">Glossary</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Term</th><th>Meaning</th></tr>
+    <tr><td>CDP</td><td>Customer Data Platform: software that unifies customer data from many systems into one profile per person.</td></tr>
+    <tr><td>Customer 360</td><td>The complete view of one customer: details, purchases, support, behaviour and scores.</td></tr>
+    <tr><td>Client / tenant / business unit</td><td>One business whose data is kept separate inside WishUnify.</td></tr>
+    <tr><td>Source</td><td>One connected system or data feed of a client (e.g. "erp_orders").</td></tr>
+    <tr><td>Mapping (source type)</td><td>Rules that turn one kind of system's columns into the standard model; reusable across clients.</td></tr>
+    <tr><td>Standard model</td><td>The six common entities every source is mapped to: customers, orders, order lines, products, events, tickets.</td></tr>
+    <tr><td>Identity resolution</td><td>Deciding which records from different systems belong to the same person.</td></tr>
+    <tr><td>Namespace</td><td>A short name for a system's customer ids, so another system's references to those ids can be linked.</td></tr>
+    <tr><td>Golden record</td><td>The single best version of a customer's details, picked from the most trusted sources.</td></tr>
+    <tr><td>Bronze / Silver / Gold</td><td>Data layers: raw copy → cleaned and unified → final calculated tables.</td></tr>
+    <tr><td>RFM</td><td>Recency, Frequency, Monetary: three 1–5 scores for how recently, how often and how much a customer buys.</td></tr>
+    <tr><td>Segment</td><td>A named group from RFM scores (Champion, Loyal, At Risk…).</td></tr>
+    <tr><td>Tier</td><td>Platinum / Gold / Silver / Bronze by lifetime spend.</td></tr>
+    <tr><td>Lifecycle stage</td><td>Prospect, New, Active, Lapsing, Churned.</td></tr>
+    <tr><td>Churn risk</td><td>Likelihood a customer has stopped buying (High / Medium / Low).</td></tr>
+    <tr><td>Cohort</td><td>Customers who made their first purchase in the same month.</td></tr>
+    <tr><td>Retention rate</td><td>Share of a cohort that bought again in a later month.</td></tr>
+    <tr><td>AOV</td><td>Average order value = revenue ÷ orders.</td></tr>
+    <tr><td>CSAT</td><td>Customer satisfaction score (1–5) from support.</td></tr>
+    <tr><td>Funnel</td><td>Steps from visit to purchase and how many visitors reach each.</td></tr>
+    <tr><td>Incremental load</td><td>Fetching only rows added or changed since the last refresh.</td></tr>
+    <tr><td>Watermark</td><td>The last value read from the incremental column, remembered for the next refresh.</td></tr>
+    <tr><td>As-of date</td><td>The date used as "today" for recency calculations.</td></tr>
+    <tr><td>Data-quality check</td><td>An automatic test of the loaded data (e.g. every order has a valid status).</td></tr>
+  </table></div>
+
+  <h2 id="limits">Known limitations</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Area</th><th>Today</th><th>Workaround</th></tr>
+    <tr><td>Login</td><td>One shared admin password; business pages have no login of their own</td><td>Put the app behind the company SSO proxy.</td></tr>
+    <tr><td>Roles</td><td>No per-user roles or per-client user restrictions</td><td>Separate installations per company; SSO proxy groups.</td></tr>
+    <tr><td>Matching</td><td>Exact email / phone / id only; no fuzzy name or address matching</td><td>Map more contact fields and shared ids.</td></tr>
+    <tr><td>Activation</td><td>CSV export only</td><td>Import the CSV into the campaign tool.</td></tr>
+    <tr><td>Real time</td><td>Batch refreshes (minutes to hours), not real-time events</td><td>Schedule frequent incremental refreshes.</td></tr>
+    <tr><td>Scale</td><td>Single server (tens of millions of rows)</td><td>Port SQL models to a cloud warehouse for larger clients.</td></tr>
+    <tr><td>Industries</td><td>Model built for transactions (orders/products)</td><td>Extend the model for subscriptions, accounts, policies.</td></tr>
+    <tr><td>Predictive models</td><td>Rule-based churn risk and RFM, no machine-learning predictions yet</td><td>Rules are tunable per client.</td></tr>
+    <tr><td>Currency</td><td>One currency per client; amounts shown in Indian format (Cr / L / K)</td><td>Convert in the mapping if sources differ.</td></tr>
+  </table></div>
+
+  <h2 id="roadmap">Roadmap</h2>
+  <ul>
+    <li><strong>Security:</strong> built-in SSO (Microsoft Entra ID / Google) with roles: admin, analyst, marketing, viewer; per-client access.</li>
+    <li><strong>Identity:</strong> fuzzy name and address matching; household grouping; manual merge / split.</li>
+    <li><strong>Activation:</strong> push audiences to email/SMS/WhatsApp platforms and ad networks (Meta, Google).</li>
+    <li><strong>Prediction:</strong> machine-learning churn probability, customer lifetime value forecast, next-best-product.</li>
+    <li><strong>Connectors:</strong> native Shopify, Salesforce, HubSpot, Zendesk / Freshdesk API connectors; SFTP.</li>
+    <li><strong>Scale:</strong> Databricks / Snowflake / Fabric deployment option using the same SQL models.</li>
+    <li><strong>Model:</strong> subscription, loyalty-points and booking entities for more industries.</li>
+  </ul>
+
+  <nav class="page-nav"><a href="admin-guide.html">← Admin &amp; onboarding guide</a><a href="index.html">Back to overview →</a></nav>
+  <footer class="doc-footer">WishUnify · Customer Data Platform accelerator · Wishtree Technologies</footer>
+</div></main>
+</body>
+</html>

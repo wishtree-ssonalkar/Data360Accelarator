@@ -1,0 +1,3 @@
+order_id,customer_source_key,email,phone,order_ts,channel,store_code,status,order_value
+SO-50001,C-1001,,,2026-09-14 18:22:00,Web,,completed,4599.00
+POS-77812,,,98765 43210,2026-10-02 12:10:00,Store,PUN-02,refunded,2499.00

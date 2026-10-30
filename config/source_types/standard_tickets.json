@@ -1,0 +1,26 @@
+{
+  "description": "WishUnify standard template for tickets (docs/templates/tickets.csv). Columns already use the standard names, so no mapping work is needed.",
+  "system": "Standard template",
+  "read": {
+    "format": "csv"
+  },
+  "outputs": [
+    {
+      "entity": "tickets",
+      "columns": {
+        "ticket_id": "nullif(trim(\"ticket_id\"), '')",
+        "email": "nullif(trim(\"email\"), '')",
+        "phone": "nullif(trim(\"phone\"), '')",
+        "customer_source_key": "nullif(trim(\"customer_source_key\"), '')",
+        "created_at": "TRY_CAST(nullif(trim(\"created_at\"), '') AS TIMESTAMP)",
+        "issue_type": "nullif(trim(\"issue_type\"), '')",
+        "status": "nullif(trim(\"status\"), '')",
+        "priority": "nullif(trim(\"priority\"), '')",
+        "csat": "TRY_CAST(nullif(trim(\"csat\"), '') AS INTEGER)",
+        "sku": "nullif(trim(\"sku\"), '')",
+        "channel": "nullif(trim(\"channel\"), '')"
+      },
+      "customer_namespace": "standard"
+    }
+  ]
+}

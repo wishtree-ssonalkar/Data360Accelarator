@@ -1,5 +1,7 @@
 # Onboarding a client
 
+> The full illustrated guide is in [`admin-guide.html`](admin-guide.html) (open `docs/index.html` in a browser).
+
 You need to change code **only** if a client needs a new entity or KPI. Everything below is configuration.
 
 ## The easy way: the Admin screens
@@ -14,7 +16,9 @@ Everything here can be done in the app, with no server or file access:
    suggested automatically), check the live result, save.
 4. **Admin > Sources & connections**: add each source (upload files, a path or cloud URL, a database, or
    an API), click **Test connection** to see raw rows *and* the mapped result, then save.
-5. **Data pipeline > Run now**: load the data. Each source's status and errors show on the same page.
+5. **Admin > AI assistant** (optional): choose Claude, Gemini, OpenAI, Azure OpenAI or an OpenAI-compatible
+   service, enter the model and key, Test connection, Save.
+6. **Data pipeline > Run now**: load the data. Each source's status and errors show on the same page.
 
 Every save is validated against the whole configuration first. The previous version is kept in
 `config/.history/`, and who changed what is shown under **Credentials & history > Change history**.

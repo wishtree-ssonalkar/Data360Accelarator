@@ -1,0 +1,3 @@
+event_id,event_type,event_ts,email,phone,customer_source_key,session_id,device,sku,order_id
+E-1,product_view,2026-09-14 18:05:00,riya.sharma@gmail.com,,,S-9f2a,mobile_web,RUN-0101,
+E-2,purchase,2026-09-14 18:22:00,riya.sharma@gmail.com,,,S-9f2a,mobile_web,RUN-0101,SO-50001

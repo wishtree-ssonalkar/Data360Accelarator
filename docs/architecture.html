@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WishUnify Architecture</title>
+<meta name="description" content="How WishUnify is built: layers, components, data flow, identity resolution, deployment, security and technology stack.">
+<link rel="stylesheet" href="assets/docs.css">
+<script src="assets/docs.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">WU</div><div class="brand-name">WishUnify</div></div>
+  <p class="brand-sub">Documentation · Wishtree Technologies</p>
+  <nav class="nav">
+    <div class="nav-group">Start here</div>
+    <a href="index.html">Overview</a>
+    <a href="use-cases.html">Who it's for &amp; examples</a>
+    <div class="nav-group">Understand</div>
+    <a href="architecture.html" aria-current="page">Architecture</a>
+    <a href="data-requirements.html">Data requirements</a>
+    <div class="nav-group">Set up &amp; use</div>
+    <a href="prerequisites.html">Prerequisites &amp; installation</a>
+    <a href="user-guide.html">User guide</a>
+    <a href="admin-guide.html">Admin &amp; onboarding guide</a>
+    <div class="nav-group">Reference</div>
+    <a href="faq.html">FAQ, glossary &amp; limits</a>
+  </nav>
+  <button class="theme-toggle" type="button">Theme: system</button>
+</aside>
+
+<main><div class="content">
+  <header class="page-head">
+    <div class="eyebrow">Architecture</div>
+    <h1>How WishUnify is built</h1>
+    <p class="lead">A config-driven pipeline loads each client's sources into a layered warehouse
+      (Bronze → Silver → Gold). A web app reads the finished Gold tables for dashboards and AI questions.
+      Everything client-specific is configuration, not code.</p>
+  </header>
+
+  <div class="toc"><strong>On this page</strong><ol>
+    <li><a href="#big-picture">Big picture</a></li>
+    <li><a href="#layers">The data layers</a></li>
+    <li><a href="#flow">One refresh, step by step</a></li>
+    <li><a href="#model">Standard data model</a></li>
+    <li><a href="#identity">Identity resolution</a></li>
+    <li><a href="#c360">Customer 360 calculations</a></li>
+    <li><a href="#components">Code components</a></li>
+    <li><a href="#config">Configuration model</a></li>
+    <li><a href="#reliability">Reliability features</a></li>
+    <li><a href="#security">Security</a></li>
+    <li><a href="#deploy">Deployment</a></li>
+    <li><a href="#stack">Technology stack</a></li>
+    <li><a href="#scale">Scale and extension</a></li>
+  </ol></div>
+
+  <h2 id="big-picture">Big picture</h2>
+  <figure class="diagram">
+    <svg viewBox="0 0 880 330" role="img" aria-label="Architecture: source systems feed connectors into a DuckDB warehouse with bronze, silver, gold and meta layers; the web app and AI assistant read gold; admins manage configuration">
+      <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="d-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+      <rect class="d-box" x="10" y="40" width="150" height="250" rx="10"/>
+      <text class="d-text" x="85" y="64" text-anchor="middle">Sources</text>
+      <text class="d-sub" x="85" y="92" text-anchor="middle">Files: CSV, Excel,</text>
+      <text class="d-sub" x="85" y="108" text-anchor="middle">JSON, Parquet</text>
+      <text class="d-sub" x="85" y="136" text-anchor="middle">Cloud: S3, Azure,</text>
+      <text class="d-sub" x="85" y="152" text-anchor="middle">Google Cloud</text>
+      <text class="d-sub" x="85" y="180" text-anchor="middle">Databases: SQL Server,</text>
+      <text class="d-sub" x="85" y="196" text-anchor="middle">Oracle, Postgres, MySQL</text>
+      <text class="d-sub" x="85" y="224" text-anchor="middle">REST APIs</text>
+      <text class="d-sub" x="85" y="252" text-anchor="middle">(or Airbyte / ADF</text>
+      <text class="d-sub" x="85" y="268" text-anchor="middle">landing zones)</text>
+      <rect class="d-accent" x="190" y="130" width="110" height="70" rx="10"/>
+      <text class="d-text" x="245" y="160" text-anchor="middle">Connectors</text>
+      <text class="d-sub" x="245" y="180" text-anchor="middle">full / incremental</text>
+      <rect class="d-box" x="330" y="20" width="330" height="290" rx="12"/>
+      <text class="d-text" x="495" y="44" text-anchor="middle">Warehouse (DuckDB file)</text>
+      <rect class="d-bronze" x="350" y="60" width="290" height="44" rx="8"/>
+      <text class="d-text" x="365" y="87">Bronze</text><text class="d-sub" x="430" y="87">raw copy per source</text>
+      <rect class="d-silver" x="350" y="114" width="290" height="70" rx="8"/>
+      <text class="d-text" x="365" y="138">Silver</text><text class="d-sub" x="430" y="138">standard model (std_*)</text>
+      <text class="d-sub" x="430" y="156">identity map, golden record,</text>
+      <text class="d-sub" x="430" y="172">transactions, tickets, sessions</text>
+      <rect class="d-gold" x="350" y="194" width="290" height="54" rx="8"/>
+      <text class="d-text" x="365" y="218">Gold</text><text class="d-sub" x="430" y="218">Customer 360, segments,</text>
+      <text class="d-sub" x="430" y="236">cohorts, funnel, products, revenue</text>
+      <rect class="d-meta" x="350" y="258" width="290" height="40" rx="8"/>
+      <text class="d-text" x="365" y="283">Meta</text><text class="d-sub" x="430" y="283">runs, errors, quality, lineage</text>
+      <rect class="d-accent" x="700" y="70" width="170" height="90" rx="10"/>
+      <text class="d-text" x="785" y="98" text-anchor="middle">Web app</text>
+      <text class="d-sub" x="785" y="118" text-anchor="middle">dashboards, Customer 360,</text>
+      <text class="d-sub" x="785" y="134" text-anchor="middle">audiences, admin screens</text>
+      <rect class="d-accent" x="700" y="190" width="170" height="70" rx="10"/>
+      <text class="d-text" x="785" y="218" text-anchor="middle">AI assistant</text>
+      <text class="d-sub" x="785" y="238" text-anchor="middle">any LLM → SQL → chart</text>
+      <path class="d-line" d="M160 165 H188" marker-end="url(#a2)"/>
+      <path class="d-line" d="M300 165 L328 90" marker-end="url(#a2)"/>
+      <path class="d-line" d="M640 220 L698 125" marker-end="url(#a2)"/>
+      <path class="d-line" d="M640 225 H698" marker-end="url(#a2)"/>
+    </svg>
+    <figcaption>The pipeline writes the warehouse; the app and the AI assistant only read the finished Gold and Meta tables.</figcaption>
+  </figure>
+
+  <h2 id="layers">The data layers</h2>
+  <p>All data lives in a single DuckDB database file (<code>data/warehouse.duckdb</code> by default), organised in four
+    schemas. DuckDB is an embedded analytical SQL database, a fast columnar engine inside one file with no separate
+    database server to run.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Layer</th><th>Contains</th><th>Built by</th><th>Why it exists</th></tr>
+    <tr><td><strong>Bronze</strong></td><td>One table per client source, e.g. <code>bronze."stride__shopify_customers"</code>: an exact copy of what the source sent, all as text, plus load run id and time.</td><td><code>cdp/connectors.py</code></td><td>Keeps the original; everything after can be rebuilt without re-reading sources. Incremental sources append here.</td></tr>
+    <tr><td><strong>Silver</strong></td><td><code>std_customers</code>, <code>std_orders</code>, <code>std_order_lines</code>, <code>std_products</code>, <code>std_events</code>, <code>std_tickets</code> (all sources in the standard model), then <code>identity_map</code>, <code>customers</code> (golden record), <code>transactions</code>, <code>transaction_lines</code>, <code>support_tickets</code>, <code>web_events</code>, <code>web_sessions</code>.</td><td><code>cdp/mapping.py</code> (generated SQL), <code>cdp/identity.py</code>, <code>sql/silver/*.sql</code></td><td>Cleaned, typed, de-duplicated data with one customer id across systems.</td></tr>
+    <tr><td><strong>Gold</strong></td><td><code>customer_360</code>, <code>segment_summary</code>, <code>cohort_retention</code>, <code>funnel_monthly</code>, <code>product_performance</code>, <code>revenue_monthly</code>.</td><td><code>sql/gold/*.sql</code></td><td>Final, pre-calculated numbers, so dashboards are fast and consistent.</td></tr>
+    <tr><td><strong>Meta</strong></td><td><code>runs</code>, <code>source_runs</code>, <code>watermarks</code>, <code>models</code>, <code>dq_results</code>, and snapshots of <code>tenants</code>, <code>sources</code>, <code>business_rules</code>.</td><td><code>cdp/pipeline.py</code></td><td>Run history, per-source errors, data-quality results, lineage and the active configuration.</td></tr>
+  </table></div>
+  <p>Every row in every layer carries a <code>tenant_id</code>, so many clients can share one installation while their
+    data stays separate.</p>
+
+  <h2 id="flow">One refresh, step by step</h2>
+  <p>A refresh runs from the <strong>Run now</strong> button, the scheduler, or <code>python -m cdp run</code>.</p>
+  <ol class="steps">
+    <li><strong>Validate configuration</strong>Every client file and mapping is checked; all problems are listed at once and the run stops before touching data.</li>
+    <li><strong>Start a working copy</strong>The live warehouse is copied to <code>warehouse.building.duckdb</code>. The app keeps serving the live copy during the whole run.</li>
+    <li><strong>Bronze: extract each source</strong>Each source's connector reads its data. A failing source is logged and skipped; its previous data stays in use. A full load returning 0 rows does not wipe the old data.</li>
+    <li><strong>Silver: map to the standard model</strong>SQL is generated from each mapping file and every source is unioned into <code>std_*</code> tables, with normalized email, phone and an identity key.</li>
+    <li><strong>Silver: resolve identities</strong>Records sharing an id, email or phone are grouped into one customer id.</li>
+    <li><strong>Silver: business tables</strong>Golden customer record, transactions, lines, tickets, sessions (<code>sql/silver</code>).</li>
+    <li><strong>Gold: calculations</strong>Customer 360, RFM, segments, tiers, churn risk, cohorts, funnel, products, revenue (<code>sql/gold</code>), using each client's business rules.</li>
+    <li><strong>Quality checks and history</strong>8 data-quality checks per client; results, per-source status and run status are written to Meta.</li>
+    <li><strong>Publish</strong>The working copy atomically replaces the live warehouse. The app notices the new file and shows the new data. If the run failed, the working copy is discarded and live data is untouched.</li>
+  </ol>
+  <p>Run status is <span class="badge good">success</span>, <span class="badge warn">partial</span> (some sources failed;
+    CLI exit code 2) or <span class="badge req">failed</span> (exit code 1).</p>
+
+  <h2 id="model">Standard data model</h2>
+  <p>Every source is mapped into six standard entities. Everything after the mapping step depends only on these, which
+    is why a new system never needs code changes. Full column lists are on the
+    <a href="data-requirements.html">Data requirements</a> page.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Entity</th><th>One row per</th><th>Key</th><th>Links to a customer by</th></tr>
+    <tr><td>customers</td><td>customer record in a source</td><td>source_key</td><td>its own id (namespace), email, phone</td></tr>
+    <tr><td>orders</td><td>order / receipt</td><td>order_id</td><td>customer id in another system, or email / phone</td></tr>
+    <tr><td>order_lines</td><td>item on an order</td><td>line_id</td><td>through its order</td></tr>
+    <tr><td>products</td><td>product (SKU)</td><td>sku</td><td>—</td></tr>
+    <tr><td>events</td><td>website / app event</td><td>event_id</td><td>logged-in email, phone or user id</td></tr>
+    <tr><td>tickets</td><td>support ticket</td><td>ticket_id</td><td>requester email, phone or id</td></tr>
+  </table></div>
+
+  <h2 id="identity">Identity resolution</h2>
+  <p>Each person-related row gets an <strong>identity key</strong>:</p>
+  <ul>
+    <li>a customer record: <code>&lt;namespace&gt;:&lt;id&gt;</code>, e.g. <code>shopify:5001</code></li>
+    <li>a row that points at a customer id (e.g. an order's customer id): the same <code>shopify:5001</code></li>
+    <li>a row with only contact details: <code>email:riya.sharma@gmail.com</code> or <code>phone:9876543210</code></li>
+  </ul>
+  <p>Keys become nodes in a graph; nodes sharing a <strong>normalized email</strong> (lower-cased, trimmed) or
+    <strong>normalized phone</strong> (digits only, last N digits, N set per client) are joined, and each connected group
+    becomes one customer with a stable <code>customer_id</code>. The match reason (email, phone, multiple emails,
+    single source) is stored so users can see <em>why</em> records were merged.</p>
+  <figure class="diagram">
+    <svg viewBox="0 0 860 280" role="img" aria-label="Example: Shopify account, CRM contact, store receipt, web visits and support ticket linked by phone and email into one customer">
+      <defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="d-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+      <rect class="d-silver" x="10" y="10" width="230" height="44" rx="8"/><text class="d-text" x="24" y="30">Shopify account</text><text class="d-sub" x="24" y="46">email + phone 98765 43210</text>
+      <path class="d-line" d="M240 32 L398 140" marker-end="url(#a3)"/>
+      <rect class="d-silver" x="10" y="64" width="230" height="44" rx="8"/><text class="d-text" x="24" y="84">CRM contact</text><text class="d-sub" x="24" y="100">phone 098765-43210</text>
+      <path class="d-line" d="M240 86 L398 140" marker-end="url(#a3)"/>
+      <rect class="d-silver" x="10" y="118" width="230" height="44" rx="8"/><text class="d-text" x="24" y="138">Store receipt</text><text class="d-sub" x="24" y="154">phone only</text>
+      <path class="d-line" d="M240 140 L398 140" marker-end="url(#a3)"/>
+      <rect class="d-silver" x="10" y="172" width="230" height="44" rx="8"/><text class="d-text" x="24" y="192">Web visits</text><text class="d-sub" x="24" y="208">logged-in email</text>
+      <path class="d-line" d="M240 194 L398 140" marker-end="url(#a3)"/>
+      <rect class="d-silver" x="10" y="226" width="230" height="44" rx="8"/><text class="d-text" x="24" y="246">Support ticket</text><text class="d-sub" x="24" y="262">requester email</text>
+      <path class="d-line" d="M240 248 L398 140" marker-end="url(#a3)"/>
+      <rect class="d-accent" x="400" y="105" width="170" height="70" rx="10"/><text class="d-text" x="485" y="135" text-anchor="middle">Match on</text><text class="d-sub" x="485" y="155" text-anchor="middle">id · email · phone</text>
+      <rect class="d-gold" x="620" y="95" width="230" height="90" rx="10"/><text class="d-text" x="735" y="127" text-anchor="middle">Customer CBF63D2945</text><text class="d-sub" x="735" y="147" text-anchor="middle">one profile, 5 records</text><text class="d-sub" x="735" y="165" text-anchor="middle">matched on "email + phone"</text>
+      <path class="d-line" d="M570 140 H618" marker-end="url(#a3)"/>
+    </svg>
+    <figcaption>Deterministic matching: transparent, explainable and repeatable.</figcaption>
+  </figure>
+  <p><strong>Golden record:</strong> when sources disagree (e.g. two names), each attribute is taken from the
+    highest-priority source that has it (priority is set per source), then the oldest record.</p>
+
+  <h2 id="c360">Customer 360 calculations</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Field</th><th>How it is calculated</th></tr>
+    <tr><td>Lifetime revenue, orders, AOV</td><td>From completed orders across all sales sources. Refunded and cancelled orders are counted separately and excluded from revenue.</td></tr>
+    <tr><td>Recency</td><td>Days between the last completed order and the as-of date.</td></tr>
+    <tr><td>RFM scores (1–5)</td><td>Buyers of the client are split into five equal groups by recency, frequency (orders) and monetary value (revenue); 5 is best.</td></tr>
+    <tr><td>RFM segment</td><td>From R and F scores: Champion, Loyal, Potential Loyalist, New Customer, Promising, Needs Attention, At Risk, Cannot Lose Them, Hibernating, Lost; non-buyers are Prospect.</td></tr>
+    <tr><td>Tier</td><td>Platinum / Gold / Silver / Bronze by lifetime revenue thresholds (per client).</td></tr>
+    <tr><td>Lifecycle stage</td><td>Prospect, New (1 order in last 60 days), Active (within active window), Lapsing, Churned.</td></tr>
+    <tr><td>Churn risk</td><td>High / Medium / Low from days since last order versus the client's thresholds and the customer's own usual gap between orders.</td></tr>
+    <tr><td>Other</td><td>Favourite category, preferred channel, support tickets, open tickets, average CSAT, web sessions, abandoned carts, annualized value.</td></tr>
+  </table></div>
+
+  <h2 id="components">Code components</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Path</th><th>Responsibility</th></tr>
+    <tr><td><code>cdp/config.py</code></td><td>Loads and validates platform, client and mapping configuration; branding; paths.</td></tr>
+    <tr><td><code>cdp/model.py</code></td><td>The standard data model (entities, columns, required fields, keys).</td></tr>
+    <tr><td><code>cdp/connectors.py</code></td><td>File, cloud, database and REST connectors; incremental loads; preview / test connection.</td></tr>
+    <tr><td><code>cdp/mapping.py</code></td><td>Generates the SQL that maps each source to the standard model; normalization; identity keys.</td></tr>
+    <tr><td><code>cdp/identity.py</code></td><td>Identity graph and customer ids.</td></tr>
+    <tr><td><code>cdp/pipeline.py</code></td><td>Orchestrates a run: build copy, extract, map, match, models, checks, publish; scheduler.</td></tr>
+    <tr><td><code>cdp/config_store.py</code></td><td>Validated writes of configuration from the admin UI, with backups and audit log; mapping preview.</td></tr>
+    <tr><td><code>cdp/secrets.py</code></td><td>Encrypted credential store.</td></tr>
+    <tr><td><code>cdp/assistant.py</code></td><td>AI assistant: per-client read-only data copy, prompt, SQL safety checks.</td></tr>
+    <tr><td><code>cdp/llm.py</code></td><td>AI provider layer: Anthropic Claude, Google Gemini, OpenAI, Azure OpenAI and OpenAI-compatible services; settings from Admin → AI assistant.</td></tr>
+    <tr><td><code>cdp/__main__.py</code></td><td>Command line: <code>validate</code>, <code>run</code>, <code>schedule</code>, <code>status</code>, <code>sample-data</code>, <code>secret-key</code>.</td></tr>
+    <tr><td><code>sql/silver</code>, <code>sql/gold</code></td><td>Business logic as plain SQL files, run in order. A header comment declares description and dependencies (used for lineage).</td></tr>
+    <tr><td><code>app/</code></td><td>Streamlit web app: business pages in <code>views/</code>, admin pages <code>views/admin_*.py</code>, sign-in in <code>auth.py</code>.</td></tr>
+    <tr><td><code>config/</code></td><td><code>platform.json</code>, <code>tenants/*.json</code> (one per client), <code>source_types/*.json</code> (one per kind of system).</td></tr>
+    <tr><td><code>tests/</code></td><td>Automated tests (pytest): connectors, incremental loads, identity, golden record, config validation, admin back-end, AI SQL safety.</td></tr>
+  </table></div>
+
+  <h2 id="config">Configuration model</h2>
+  <p>Three kinds of configuration, all editable from the admin screens or as JSON files:</p>
+  <div class="cards">
+    <div class="card"><h4>Platform</h4><p><code>config/platform.json</code>: branding, warehouse location, as-of date, default business rules.</p></div>
+    <div class="card"><h4>Client (tenant)</h4><p><code>config/tenants/&lt;id&gt;.json</code>: name, currency, phone digits, rule overrides, and the list of sources with their connectors.</p></div>
+    <div class="card"><h4>Mapping (source type)</h4><p><code>config/source_types/&lt;name&gt;.json</code>: how one kind of system's columns become standard columns. Reusable across clients.</p></div>
+  </div>
+  <p>Secrets are never stored in these files; they are referenced by name and resolved from the encrypted credential
+    store or environment variables.</p>
+
+  <h2 id="reliability">Reliability features</h2>
+  <ul>
+    <li><strong>Zero-downtime refresh</strong>: builds in a copy, swaps in when done; the app never reads a half-built warehouse.</li>
+    <li><strong>Failure isolation</strong>: one bad source doesn't stop the others; its last good data stays in use.</li>
+    <li><strong>Empty-extract protection</strong>: a full load returning 0 rows keeps the previous data (status "warning").</li>
+    <li><strong>Incremental loads</strong>: per-source watermark; only new or changed rows are fetched; de-duplicated by key, latest version wins.</li>
+    <li><strong>Validation before every run and every admin save</strong>.</li>
+    <li><strong>Run history and per-source errors</strong> in Meta and on the Data pipeline page; JSON logs in <code>data/logs/pipeline.log</code>.</li>
+    <li><strong>Data-quality checks</strong>: orders linked to a customer, valid order status, orders have a value, customers with email, unique order ids, lines with a known product, tickets linked to a customer, no future order dates.</li>
+    <li><strong>Exit codes for automation</strong>: 0 success, 2 partial, 1 failed.</li>
+  </ul>
+
+  <h2 id="security">Security</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Area</th><th>Control</th></tr>
+    <tr><td>Admin screens</td><td>Password (<code>CDP_ADMIN_PASSWORD</code>), compared in constant time, with lockout after 5 wrong attempts. With <code>CDP_ENV=production</code> (Docker default) the screens stay locked until a password is set.</td></tr>
+    <tr><td>Credentials</td><td>Encrypted at rest with Fernet (AES + HMAC) using <code>CDP_SECRET_KEY</code>; values are never shown again in the UI; config refers to them by name only.</td></tr>
+    <tr><td>Source access</td><td>Database connections are opened read-only where the driver supports it; the pipeline never writes to sources.</td></tr>
+    <tr><td>Client separation</td><td>Every row is tagged with <code>tenant_id</code>; every query in the app is filtered by client.</td></tr>
+    <tr><td>AI assistant</td><td>Works on an in-memory copy containing only the selected client's Gold tables, with file and network access disabled; only a single <code>SELECT</code> is allowed; writes, file reads and settings changes are blocked.</td></tr>
+    <tr><td>Data sent to the AI provider</td><td>Table and column descriptions, the client's category and city names, the question, and (for the summary) up to 30 result rows. An admin can switch off sending result rows (Admin → AI assistant), or leave the assistant unconfigured, if that is not acceptable.</td></tr>
+    <tr><td>Change tracking</td><td>Every configuration change is backed up in <code>config/.history/</code> and written to an audit log with the user's name.</td></tr>
+    <tr><td>Container</td><td>Runs as a non-root user; data and configuration on separate volumes.</td></tr>
+  </table></div>
+  <div class="callout warn"><strong>Not yet included</strong>Single sign-on (SSO) and per-user roles. Until then, place the app behind your
+    organisation's login (for example Azure AD Application Proxy or an OAuth proxy) and use the admin password for configuration.</div>
+
+  <h2 id="deploy">Deployment</h2>
+  <figure class="diagram">
+    <svg viewBox="0 0 860 200" role="img" aria-label="Deployment: users reach the app container through the company login; a scheduler container refreshes the warehouse; both share data and config volumes">
+      <defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="d-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+      <rect class="d-box" x="10" y="70" width="120" height="60" rx="10"/><text class="d-text" x="70" y="98" text-anchor="middle">Users</text><text class="d-sub" x="70" y="116" text-anchor="middle">browser</text>
+      <rect class="d-meta" x="160" y="70" width="140" height="60" rx="10"/><text class="d-text" x="230" y="98" text-anchor="middle">Company login</text><text class="d-sub" x="230" y="116" text-anchor="middle">HTTPS / SSO proxy</text>
+      <rect class="d-box" x="330" y="10" width="330" height="180" rx="12"/><text class="d-text" x="495" y="32" text-anchor="middle">Server / VM (Docker)</text>
+      <rect class="d-accent" x="350" y="46" width="140" height="56" rx="8"/><text class="d-text" x="420" y="70" text-anchor="middle">app</text><text class="d-sub" x="420" y="88" text-anchor="middle">web UI :8501</text>
+      <rect class="d-accent" x="350" y="116" width="140" height="56" rx="8"/><text class="d-text" x="420" y="140" text-anchor="middle">scheduler</text><text class="d-sub" x="420" y="158" text-anchor="middle">refresh every N min</text>
+      <rect class="d-gold" x="510" y="46" width="130" height="56" rx="8"/><text class="d-text" x="575" y="70" text-anchor="middle">data volume</text><text class="d-sub" x="575" y="88" text-anchor="middle">warehouse, uploads</text>
+      <rect class="d-silver" x="510" y="116" width="130" height="56" rx="8"/><text class="d-text" x="575" y="140" text-anchor="middle">config volume</text><text class="d-sub" x="575" y="158" text-anchor="middle">clients, mappings</text>
+      <rect class="d-box" x="700" y="30" width="150" height="60" rx="10"/><text class="d-text" x="775" y="56" text-anchor="middle">Client sources</text><text class="d-sub" x="775" y="74" text-anchor="middle">DBs, storage, APIs</text>
+      <rect class="d-box" x="700" y="110" width="150" height="60" rx="10"/><text class="d-text" x="775" y="136" text-anchor="middle">AI provider</text><text class="d-sub" x="775" y="154" text-anchor="middle">chosen in Admin</text>
+      <path class="d-line" d="M130 100 H158" marker-end="url(#a4)"/><path class="d-line" d="M300 100 L348 76" marker-end="url(#a4)"/>
+      <path class="d-line" d="M490 74 H508" marker-end="url(#a4)"/><path class="d-line" d="M490 144 H508" marker-end="url(#a4)"/>
+      <path class="d-line" d="M660 60 H698" marker-end="url(#a4)"/><path class="d-line" d="M660 140 H698" marker-end="url(#a4)"/>
+    </svg>
+    <figcaption>Recommended single-server deployment with docker-compose: an app container and a scheduler container sharing two volumes.</figcaption>
+  </figure>
+  <p>Step-by-step instructions are on <a href="prerequisites.html">Prerequisites &amp; installation</a>.</p>
+
+  <h2 id="stack">Technology stack</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Purpose</th><th>Technology</th><th>Licence</th></tr>
+    <tr><td>Language</td><td>Python 3.13</td><td>Open source</td></tr>
+    <tr><td>Warehouse / SQL engine</td><td>DuckDB 2.0</td><td>MIT</td></tr>
+    <tr><td>Data handling</td><td>pandas, NumPy, PyArrow</td><td>BSD / Apache</td></tr>
+    <tr><td>Web app</td><td>Streamlit, Plotly</td><td>Apache / MIT</td></tr>
+    <tr><td>Database drivers</td><td>pyodbc (+ OS ODBC drivers), DuckDB postgres / mysql extensions, sqlite3</td><td>MIT / various</td></tr>
+    <tr><td>Excel</td><td>openpyxl</td><td>MIT</td></tr>
+    <tr><td>Encryption</td><td>cryptography (Fernet)</td><td>Apache / BSD</td></tr>
+    <tr><td>AI</td><td>Anthropic Claude (official SDK), Google Gemini, OpenAI, Azure OpenAI or any OpenAI-compatible API (Groq, Mistral, OpenRouter, local Ollama)</td><td>Client's own key; chosen in the admin screens</td></tr>
+    <tr><td>Packaging</td><td>Docker, docker-compose, GitHub Actions</td><td>—</td></tr>
+  </table></div>
+
+  <h2 id="scale">Scale and extension</h2>
+  <ul>
+    <li><strong>Volume:</strong> one DuckDB file on one server comfortably handles tens of millions of rows. Plan disk for about 3× the warehouse size, because a refresh builds a full copy before swapping.</li>
+    <li><strong>Bigger clients:</strong> the Silver and Gold logic is plain SQL and the standard model is engine-neutral, so it can be moved to Databricks, Snowflake or Microsoft Fabric for very large data.</li>
+    <li><strong>New systems:</strong> add a mapping (UI or JSON). New connector kinds are added in <code>cdp/connectors.py</code>.</li>
+    <li><strong>New industries:</strong> add entities to <code>cdp/model.py</code> and the SQL that uses them (e.g. subscriptions, policies, accounts).</li>
+    <li><strong>New KPIs or pages:</strong> add a SQL file to <code>sql/gold</code> and a page in <code>app/views</code>.</li>
+  </ul>
+
+  <nav class="page-nav"><a href="use-cases.html">← Who it's for &amp; examples</a><a href="data-requirements.html">Data requirements →</a></nav>
+  <footer class="doc-footer">WishUnify · Customer Data Platform accelerator · Wishtree Technologies</footer>
+</div></main>
+</body>
+</html>

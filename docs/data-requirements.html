@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WishUnify Data Requirements</title>
+<meta name="description" content="What data a client needs to provide to WishUnify: minimum and recommended sources, every standard field, formats, quality rules and templates.">
+<link rel="stylesheet" href="assets/docs.css">
+<script src="assets/docs.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">WU</div><div class="brand-name">WishUnify</div></div>
+  <p class="brand-sub">Documentation · Wishtree Technologies</p>
+  <nav class="nav">
+    <div class="nav-group">Start here</div>
+    <a href="index.html">Overview</a>
+    <a href="use-cases.html">Who it's for &amp; examples</a>
+    <div class="nav-group">Understand</div>
+    <a href="architecture.html">Architecture</a>
+    <a href="data-requirements.html" aria-current="page">Data requirements</a>
+    <div class="nav-group">Set up &amp; use</div>
+    <a href="prerequisites.html">Prerequisites &amp; installation</a>
+    <a href="user-guide.html">User guide</a>
+    <a href="admin-guide.html">Admin &amp; onboarding guide</a>
+    <div class="nav-group">Reference</div>
+    <a href="faq.html">FAQ, glossary &amp; limits</a>
+  </nav>
+  <button class="theme-toggle" type="button">Theme: system</button>
+</aside>
+
+<main><div class="content">
+  <header class="page-head">
+    <div class="eyebrow">Understand</div>
+    <h1>What data is required</h1>
+    <p class="lead">WishUnify works with the data a business already has. This page explains the minimum needed to
+      start, what unlocks each feature, every field in the standard model, accepted formats, and quality rules.</p>
+  </header>
+
+  <div class="toc"><strong>On this page</strong><ol>
+    <li><a href="#minimum">Minimum to get started</a></li>
+    <li><a href="#feature-matrix">Which data unlocks which feature</a></li>
+    <li><a href="#sources">Typical source systems</a></li>
+    <li><a href="#fields">Standard fields, entity by entity</a></li>
+    <li><a href="#templates">Ready-made CSV templates</a></li>
+    <li><a href="#formats">Accepted formats and connections</a></li>
+    <li><a href="#quality">Data quality rules</a></li>
+    <li><a href="#history">History and volume</a></li>
+    <li><a href="#privacy">Personal data and privacy</a></li>
+  </ol></div>
+
+  <h2 id="minimum">Minimum to get started</h2>
+  <div class="callout tip"><strong>Smallest useful dataset: orders with a customer identifier</strong>
+    One table of orders with an <strong>order id</strong>, <strong>date</strong>, <strong>value</strong>, <strong>status</strong>,
+    <strong>channel</strong> and at least one of <strong>customer id, email or phone</strong> is enough for Customer 360,
+    RFM segments, tiers, churn risk, retention cohorts and revenue reports.</div>
+  <div class="table-wrap"><table>
+    <tr><th>Level</th><th>Data</th><th>What the client gets</th></tr>
+    <tr><td><span class="badge req">Minimum</span></td><td>Orders (with customer email / phone / id)</td><td>Customer list, lifetime value, RFM, segments, tiers, churn risk, cohorts, revenue trends, AI questions.</td></tr>
+    <tr><td><span class="badge good">Recommended</span></td><td>+ Customers (CRM / store accounts), order lines, product catalog</td><td>+ names and contact details, marketing consent, city/region, favourite category, product performance and margin.</td></tr>
+    <tr><td><span class="badge good">Full 360</span></td><td>+ Support tickets, website / app events</td><td>+ complaints and CSAT on each profile, abandoned carts, conversion funnel, problem products.</td></tr>
+  </table></div>
+
+  <h2 id="feature-matrix">Which data unlocks which feature</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Feature</th><th>customers</th><th>orders</th><th>order_lines</th><th>products</th><th>events</th><th>tickets</th></tr>
+    <tr><td>Customer 360 profile</td><td>●</td><td>●</td><td>○</td><td>○</td><td>○</td><td>○</td></tr>
+    <tr><td>RFM, segments, tiers, churn risk</td><td></td><td>●</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Retention cohorts</td><td></td><td>●</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Revenue by channel, new vs returning</td><td></td><td>●</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Audience builder (with consent, city)</td><td>●</td><td>●</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Favourite category</td><td></td><td>●</td><td>●</td><td>●</td><td></td><td></td></tr>
+    <tr><td>Product performance, margin</td><td></td><td>●</td><td>●</td><td>●</td><td>○</td><td>○</td></tr>
+    <tr><td>Conversion funnel, abandoned carts</td><td></td><td></td><td></td><td></td><td>●</td><td></td></tr>
+    <tr><td>Support history, CSAT, open tickets</td><td></td><td></td><td></td><td></td><td></td><td>●</td></tr>
+    <tr><td>Ask your data (AI)</td><td colspan="6">Works on whatever has been loaded</td></tr>
+  </table></div>
+  <p><strong>●</strong> needed &nbsp; <strong>○</strong> enriches the feature when present</p>
+
+  <h2 id="sources">Typical source systems</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Data</th><th>Usually comes from</th></tr>
+    <tr><td>Customers</td><td>E-commerce platform (Shopify, WooCommerce, Magento), CRM (Salesforce, HubSpot, Zoho, Dynamics), loyalty programme, ERP customer master</td></tr>
+    <tr><td>Orders and lines</td><td>E-commerce platform, POS / billing system, ERP, marketplace reports (Amazon, Flipkart), food-delivery partner reports</td></tr>
+    <tr><td>Products</td><td>PIM, ERP item master, e-commerce catalog export</td></tr>
+    <tr><td>Events</td><td>Website / app tracking (Segment, Snowplow, GA4 BigQuery export, Mixpanel export, in-house logs)</td></tr>
+    <tr><td>Tickets</td><td>Helpdesk (Zendesk, Freshdesk, Salesforce Service Cloud, Zoho Desk), call-centre system</td></tr>
+  </table></div>
+  <p>Ready-made mappings are included for Shopify customers / orders / order items, Salesforce contacts, a POS
+    line-level export, Zendesk tickets, JSON web events, a product catalog and the six standard templates. Any other
+    system is added with a mapping in the admin screens.</p>
+
+  <h2 id="fields">Standard fields, entity by entity</h2>
+  <p>Source columns can have any names and formats; the mapping converts them. <span class="badge req">required</span>
+    fields must be mapped for that entity; everything else is optional but improves results.</p>
+
+  <h3>customers: one row per customer record in a source</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Field</th><th></th><th>Type</th><th>Meaning</th></tr>
+    <tr><td><code>source_key</code></td><td><span class="badge req">required</span></td><td>text</td><td>Customer id in the source system</td></tr>
+    <tr><td><code>email</code></td><td></td><td>text</td><td>Email, any case or spacing (cleaned automatically). Key for matching.</td></tr>
+    <tr><td><code>phone</code></td><td></td><td>text</td><td>Phone, any format (digits extracted, last N kept). Key for matching.</td></tr>
+    <tr><td><code>first_name</code>, <code>last_name</code></td><td></td><td>text</td><td>Name parts</td></tr>
+    <tr><td><code>full_name</code></td><td></td><td>text</td><td>If the source has one name field</td></tr>
+    <tr><td><code>city</code>, <code>region</code></td><td></td><td>text</td><td>Location / sales territory</td></tr>
+    <tr><td><code>lead_source</code></td><td></td><td>text</td><td>How the customer was acquired</td></tr>
+    <tr><td><code>accepts_marketing</code></td><td></td><td>yes/no</td><td>Marketing consent (used by the audience builder)</td></tr>
+    <tr><td><code>created_at</code></td><td></td><td>date-time</td><td>When the record was created</td></tr>
+  </table></div>
+
+  <h3>orders: one row per order or receipt</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Field</th><th></th><th>Type</th><th>Meaning</th></tr>
+    <tr><td><code>order_id</code></td><td><span class="badge req">required</span></td><td>text</td><td>Order / receipt / invoice number, unique per source</td></tr>
+    <tr><td><code>order_ts</code></td><td><span class="badge req">required</span></td><td>date-time</td><td>When the order was placed</td></tr>
+    <tr><td><code>channel</code></td><td><span class="badge req">required</span></td><td>text</td><td>Web, App, Store, Marketplace… (can be a constant per source)</td></tr>
+    <tr><td><code>status</code></td><td><span class="badge req">required</span></td><td>text</td><td>Must become <code>completed</code>, <code>refunded</code> or <code>cancelled</code> (the mapping converts the source's values)</td></tr>
+    <tr><td><code>customer_source_key</code></td><td></td><td>text</td><td>The buyer's id in a customer system (e.g. Shopify customer id)</td></tr>
+    <tr><td><code>email</code>, <code>phone</code></td><td></td><td>text</td><td>Buyer contact, when the order carries it (e.g. POS phone)</td></tr>
+    <tr><td><code>store_code</code></td><td></td><td>text</td><td>Store / branch for offline orders</td></tr>
+    <tr><td><code>order_value</code></td><td></td><td>number</td><td>Order total. Needed when there are no order lines.</td></tr>
+  </table></div>
+  <div class="callout info">An order must carry <strong>at least one</strong> of <code>customer_source_key</code>, <code>email</code> or
+    <code>phone</code> to be linked to a customer. Orders without any are still counted in product sales but not on a profile.</div>
+
+  <h3>order_lines: one row per item on an order</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Field</th><th></th><th>Type</th><th>Meaning</th></tr>
+    <tr><td><code>line_id</code></td><td><span class="badge req">required</span></td><td>text</td><td>Unique line id (can be built, e.g. order id + line number)</td></tr>
+    <tr><td><code>order_id</code></td><td><span class="badge req">required</span></td><td>text</td><td>Order the line belongs to</td></tr>
+    <tr><td><code>quantity</code></td><td><span class="badge req">required</span></td><td>whole number</td><td>Units</td></tr>
+    <tr><td><code>line_amount</code></td><td><span class="badge req">required</span></td><td>number</td><td>Line total after discount</td></tr>
+    <tr><td><code>sku</code></td><td></td><td>text</td><td>Product code (links to products)</td></tr>
+  </table></div>
+
+  <h3>products: one row per product</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Field</th><th></th><th>Type</th><th>Meaning</th></tr>
+    <tr><td><code>sku</code></td><td><span class="badge req">required</span></td><td>text</td><td>Product code</td></tr>
+    <tr><td><code>product_name</code></td><td><span class="badge req">required</span></td><td>text</td><td>Name</td></tr>
+    <tr><td><code>category</code></td><td></td><td>text</td><td>Category (used for favourite category and reports)</td></tr>
+    <tr><td><code>list_price</code>, <code>unit_cost</code></td><td></td><td>number</td><td>Price; cost (needed for margin)</td></tr>
+    <tr><td><code>launched_on</code></td><td></td><td>date</td><td>Launch date</td></tr>
+    <tr><td><code>is_active</code></td><td></td><td>yes/no</td><td>Currently sold</td></tr>
+  </table></div>
+
+  <h3>events: one row per website / app event</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Field</th><th></th><th>Type</th><th>Meaning</th></tr>
+    <tr><td><code>event_id</code></td><td><span class="badge req">required</span></td><td>text</td><td>Unique event id</td></tr>
+    <tr><td><code>event_type</code></td><td><span class="badge req">required</span></td><td>text</td><td>For the funnel use <code>page_view</code>, <code>product_view</code>, <code>add_to_cart</code>, <code>checkout_start</code>, <code>purchase</code></td></tr>
+    <tr><td><code>event_ts</code></td><td><span class="badge req">required</span></td><td>date-time</td><td>When it happened</td></tr>
+    <tr><td><code>session_id</code></td><td><span class="badge req">required</span></td><td>text</td><td>Visit / session (or anonymous visitor id)</td></tr>
+    <tr><td><code>email</code>, <code>phone</code>, <code>customer_source_key</code></td><td></td><td>text</td><td>Who the visitor is, when logged in</td></tr>
+    <tr><td><code>device</code>, <code>sku</code>, <code>order_id</code></td><td></td><td>text</td><td>Device type; product viewed; order created</td></tr>
+  </table></div>
+
+  <h3>tickets: one row per support ticket</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Field</th><th></th><th>Type</th><th>Meaning</th></tr>
+    <tr><td><code>ticket_id</code></td><td><span class="badge req">required</span></td><td>text</td><td>Ticket id</td></tr>
+    <tr><td><code>created_at</code></td><td><span class="badge req">required</span></td><td>date-time</td><td>When it was raised</td></tr>
+    <tr><td><code>status</code></td><td><span class="badge req">required</span></td><td>text</td><td><code>solved</code>, <code>closed</code> or <code>resolved</code> count as resolved</td></tr>
+    <tr><td><code>email</code>, <code>phone</code>, <code>customer_source_key</code></td><td></td><td>text</td><td>Requester</td></tr>
+    <tr><td><code>issue_type</code>, <code>priority</code>, <code>channel</code></td><td></td><td>text</td><td>Subject / category; priority; email, chat, phone…</td></tr>
+    <tr><td><code>csat</code></td><td></td><td>1–5</td><td>Satisfaction score</td></tr>
+    <tr><td><code>sku</code></td><td></td><td>text</td><td>Related product (for problem-product analysis)</td></tr>
+  </table></div>
+
+  <h2 id="templates">Ready-made CSV templates</h2>
+  <p>When a client cannot give direct access to a system, ask them to export into these templates. Each has the
+    standard column names and two example rows, and a matching mapping is already included (<code>standard_*</code>), so
+    no mapping work is needed: in <strong>Admin → Sources</strong>, choose "Standard template — standard_orders"
+    (etc.) and upload the file.</p>
+  <div class="cards">
+    <a class="card" href="templates/customers.csv" download><h4>customers.csv</h4><p>Customer master / CRM contacts</p></a>
+    <a class="card" href="templates/orders.csv" download><h4>orders.csv</h4><p>Orders and receipts</p></a>
+    <a class="card" href="templates/order_lines.csv" download><h4>order_lines.csv</h4><p>Items on each order</p></a>
+    <a class="card" href="templates/products.csv" download><h4>products.csv</h4><p>Product catalog</p></a>
+    <a class="card" href="templates/events.csv" download><h4>events.csv</h4><p>Website / app events</p></a>
+    <a class="card" href="templates/tickets.csv" download><h4>tickets.csv</h4><p>Support tickets</p></a>
+  </div>
+  <p>Dates in the templates use <code>YYYY-MM-DD HH:MM:SS</code>; yes/no fields accept <code>true/false</code>,
+    <code>yes/no</code>, <code>y/n</code> or <code>1/0</code>; order status must be <code>completed</code>,
+    <code>refunded</code> or <code>cancelled</code>.</p>
+
+  <h2 id="formats">Accepted formats and connections</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Kind</th><th>Supported</th><th>Notes</th></tr>
+    <tr><td>Files</td><td>CSV (any delimiter), Excel (.xlsx), JSON, JSON lines, Parquet</td><td>Upload in the UI, or point at a path or folder pattern (e.g. <code>orders/*.csv</code> to read every daily file).</td></tr>
+    <tr><td>Cloud storage</td><td>Amazon S3, Azure Blob / ADLS Gen2, Google Cloud Storage, HTTPS URLs</td><td>Read-only credentials.</td></tr>
+    <tr><td>Databases</td><td>SQL Server, Oracle, PostgreSQL, MySQL, SQLite, and any database with an ODBC driver (DB2, Snowflake, …)</td><td>Table or SQL query; read-only user; optional incremental column (e.g. <code>modified_at</code>).</td></tr>
+    <tr><td>APIs</td><td>JSON REST APIs with bearer token or API-key header, page-number or next-link paging</td><td>Large SaaS platforms (Salesforce, HubSpot, Dynamics) are best landed first with an ingestion tool (Airbyte, Fivetran, Azure Data Factory) into files or a database.</td></tr>
+  </table></div>
+
+  <h2 id="quality">Data quality rules</h2>
+  <ul>
+    <li><strong>Stable ids:</strong> customer, order, line, product and ticket ids must not change between exports. Changed rows are recognised by id.</li>
+    <li><strong>At least one contact key per person:</strong> email or phone (or an id shared across systems) is how records are matched. The more systems that capture email/phone, the better the 360.</li>
+    <li><strong>Consistent phone country:</strong> matching uses the last N digits (10 by default for India; set per client).</li>
+    <li><strong>Real dates:</strong> one format per column (the mapping converts it, e.g. <code>dd/mm/yyyy</code>); no future dates.</li>
+    <li><strong>Clear order status:</strong> the source's values must be mappable to completed, refunded or cancelled.</li>
+    <li><strong>Values without currency symbols</strong> in amount columns (e.g. <code>4599.00</code>, not <code>₹4,599</code>); one currency per client.</li>
+    <li><strong>Product codes</strong> in order lines should match the catalog.</li>
+  </ul>
+  <p>After each refresh WishUnify checks: orders linked to a customer (target 90%+), valid order status (100%),
+    orders have a value, customers with an email (80%+), unique order ids, lines with a known product, tickets linked
+    to a customer, and no future order dates. Results appear on <strong>Data pipeline → Data quality</strong>.</p>
+
+  <h2 id="history">History and volume</h2>
+  <ul>
+    <li><strong>History:</strong> at least <strong>12 months</strong> of orders; <strong>24+ months</strong> recommended for meaningful retention cohorts, churn and RFM.</li>
+    <li><strong>Initial load:</strong> full history once; then daily or hourly updates (incremental where the source has a "modified at" column).</li>
+    <li><strong>Volume:</strong> a single server handles tens of millions of rows (see <a href="prerequisites.html#sizing">sizing</a>).</li>
+  </ul>
+
+  <h2 id="privacy">Personal data and privacy</h2>
+  <ul>
+    <li>WishUnify processes personal data (names, emails, phones, purchase history). The client remains the data controller; get their data-protection approval before loading.</li>
+    <li>Only load the fields needed. Do not load payment card data, passwords, government ids or health data; WishUnify does not need them.</li>
+    <li>Data stays on the server where WishUnify runs. The only external transfer is to the AI provider when the AI assistant is used (see <a href="architecture.html#security">Architecture → Security</a>).</li>
+    <li>Respect marketing consent: the audience builder filters on <code>accepts_marketing</code> by default.</li>
+    <li>To delete a person, remove them from the sources (or exclude them in the mapping) and run a refresh; derived tables are rebuilt from scratch each run.</li>
+  </ul>
+
+  <nav class="page-nav"><a href="architecture.html">← Architecture</a><a href="prerequisites.html">Prerequisites &amp; installation →</a></nav>
+  <footer class="doc-footer">WishUnify · Customer Data Platform accelerator · Wishtree Technologies</footer>
+</div></main>
+</body>
+</html>

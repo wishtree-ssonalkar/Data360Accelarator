@@ -1,0 +1,21 @@
+{
+  "description": "WishUnify standard template for products (docs/templates/products.csv). Columns already use the standard names, so no mapping work is needed.",
+  "system": "Standard template",
+  "read": {
+    "format": "csv"
+  },
+  "outputs": [
+    {
+      "entity": "products",
+      "columns": {
+        "sku": "nullif(trim(\"sku\"), '')",
+        "product_name": "nullif(trim(\"product_name\"), '')",
+        "category": "nullif(trim(\"category\"), '')",
+        "list_price": "TRY_CAST(nullif(trim(\"list_price\"), '') AS DECIMAL(14,2))",
+        "unit_cost": "TRY_CAST(nullif(trim(\"unit_cost\"), '') AS DECIMAL(14,2))",
+        "launched_on": "TRY_CAST(nullif(trim(\"launched_on\"), '') AS DATE)",
+        "is_active": "lower(trim(nullif(trim(\"is_active\"), ''))) IN ('true','yes','y','1')"
+      }
+    }
+  ]
+}

@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WishUnify Admin and Onboarding Guide</title>
+<meta name="description" content="How administrators onboard a client in WishUnify from the admin screens: clients, credentials, mappings, sources, refresh, troubleshooting and an implementation playbook.">
+<link rel="stylesheet" href="assets/docs.css">
+<script src="assets/docs.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">WU</div><div class="brand-name">WishUnify</div></div>
+  <p class="brand-sub">Documentation · Wishtree Technologies</p>
+  <nav class="nav">
+    <div class="nav-group">Start here</div>
+    <a href="index.html">Overview</a>
+    <a href="use-cases.html">Who it's for &amp; examples</a>
+    <div class="nav-group">Understand</div>
+    <a href="architecture.html">Architecture</a>
+    <a href="data-requirements.html">Data requirements</a>
+    <div class="nav-group">Set up &amp; use</div>
+    <a href="prerequisites.html">Prerequisites &amp; installation</a>
+    <a href="user-guide.html">User guide</a>
+    <a href="admin-guide.html" aria-current="page">Admin &amp; onboarding guide</a>
+    <div class="nav-group">Reference</div>
+    <a href="faq.html">FAQ, glossary &amp; limits</a>
+  </nav>
+  <button class="theme-toggle" type="button">Theme: system</button>
+</aside>
+
+<main><div class="content">
+  <header class="page-head">
+    <div class="eyebrow">Administer</div>
+    <h1>Admin &amp; onboarding guide</h1>
+    <p class="lead">Onboard a new client entirely from the app: create the client, store credentials, map new systems,
+      connect sources, test them and load the data. No server or file access needed.</p>
+  </header>
+
+  <div class="toc"><strong>On this page</strong><ol>
+    <li><a href="#signin">Signing in</a></li>
+    <li><a href="#overview">Onboarding in 6 steps</a></li>
+    <li><a href="#client">1. Create the client</a></li>
+    <li><a href="#creds">2. Store credentials</a></li>
+    <li><a href="#mapping">3. Map a new system</a></li>
+    <li><a href="#cookbook">Mapping expression cookbook</a></li>
+    <li><a href="#sources">4. Connect sources</a></li>
+    <li><a href="#run">5. Load the data</a></li>
+    <li><a href="#verify">6. Verify</a></li>
+    <li><a href="#ai">Set up the AI assistant</a></li>
+    <li><a href="#changes">Changes, history and rollback</a></li>
+    <li><a href="#trouble">Troubleshooting sources</a></li>
+    <li><a href="#playbook">Implementation playbook</a></li>
+    <li><a href="#files">Doing it with files instead</a></li>
+  </ol></div>
+
+  <h2 id="signin">Signing in</h2>
+  <p>The <strong>Admin</strong> section at the bottom of the menu has five screens: Clients, Sources &amp; connections,
+    Mappings, AI assistant, and Credentials &amp; history. They ask for the admin password (set by IT as <code>CDP_ADMIN_PASSWORD</code>)
+    and your name, which is recorded in the change history. After 5 wrong attempts sign-in is locked for 5 minutes.
+    Use <strong>Sign out of admin</strong> in the sidebar when you are done.</p>
+  <div class="callout warn"><strong>Development mode</strong>On a laptop without a password, admin screens open with a
+    yellow warning. Deployed servers run with <code>CDP_ENV=production</code> and stay locked until a password is set.</div>
+
+  <h2 id="overview">Onboarding in 6 steps</h2>
+  <div class="cards">
+    <div class="card"><div class="num">1</div><h4>Create the client</h4><p>Name, currency, business rules.</p></div>
+    <div class="card"><div class="num">2</div><h4>Store credentials</h4><p>Database passwords and API tokens, encrypted.</p></div>
+    <div class="card"><div class="num">3</div><h4>Map new systems</h4><p>Only for systems without a mapping yet.</p></div>
+    <div class="card"><div class="num">4</div><h4>Connect sources</h4><p>Upload, path, database or API, then Test connection.</p></div>
+    <div class="card"><div class="num">5</div><h4>Load the data</h4><p>Data pipeline → Run now.</p></div>
+    <div class="card"><div class="num">6</div><h4>Verify</h4><p>Source status, data quality, a few known customers.</p></div>
+  </div>
+
+  <h2 id="client">1. Create the client</h2>
+  <p><strong>Admin → Clients → "➕ New client".</strong></p>
+  <div class="table-wrap"><table>
+    <tr><th>Field</th><th>What to enter</th></tr>
+    <tr><td>Client id</td><td>Permanent, lowercase, e.g. <code>acme_retail</code>. Used in file paths and the database; cannot be changed later.</td></tr>
+    <tr><td>Display name, industry, currency</td><td>Shown in the app (currency is a 3-letter code, e.g. INR).</td></tr>
+    <tr><td>Phone digits to match on</td><td>How many trailing digits identify a phone number: 10 for India; adjust for other countries.</td></tr>
+    <tr><td>Active if ordered within (days)</td><td>A buyer is "Active" if their last order is within this many days (default 180).</td></tr>
+    <tr><td>Churn risk medium / high after (days)</td><td>Days since last order for Medium / High churn risk (defaults 120 / 240). Also compared with each customer's own usual gap.</td></tr>
+    <tr><td>Recent activity window</td><td>Window for "recent web sessions" (default 90 days).</td></tr>
+    <tr><td>Platinum / Gold / Silver from</td><td>Lifetime spend thresholds for tiers (defaults 60,000 / 25,000 / 8,000). Must increase Silver → Gold → Platinum.</td></tr>
+  </table></div>
+  <p>Only values that differ from the platform defaults are saved for the client. Click <strong>Save client</strong>.</p>
+
+  <h2 id="creds">2. Store credentials</h2>
+  <p><strong>Admin → Credentials &amp; history.</strong> Enter a <strong>Name</strong> in capitals (e.g. <code>ACME_ERP_DB</code>)
+    and the <strong>Value</strong> (connection string, password or token), then <strong>Save credential</strong>.</p>
+  <ul>
+    <li>Values are encrypted and <strong>never shown again</strong>; to change one, save the same name with a new value.</li>
+    <li>The table shows every credential used by any source and whether it is <em>stored</em>, set as an
+      <em>environment variable</em>, or <strong>MISSING</strong>.</li>
+    <li>Connection string formats:</li>
+  </ul>
+  <div class="table-wrap"><table>
+    <tr><th>Database</th><th>Connection string example</th></tr>
+    <tr><td>SQL Server</td><td><code>Driver={ODBC Driver 18 for SQL Server};Server=tcp:host,1433;Database=Sales;Uid=reader;Pwd=…;Encrypt=yes</code></td></tr>
+    <tr><td>Oracle</td><td><code>Driver={Oracle ODBC Driver};Dbq=host:1521/service;Uid=reader;Pwd=…</code></td></tr>
+    <tr><td>PostgreSQL</td><td><code>host=host port=5432 dbname=crm user=reader password=…</code></td></tr>
+    <tr><td>MySQL</td><td><code>host=host port=3306 database=shop user=reader password=…</code></td></tr>
+    <tr><td>Other ODBC</td><td><code>DSN=…;Uid=…;Pwd=…</code></td></tr>
+  </table></div>
+
+  <h2 id="mapping">3. Map a new system</h2>
+  <p>Skip this step when a mapping for the system already exists (Shopify, Salesforce contacts, POS lines, Zendesk, JSON web
+    events, product catalog, and the six <em>Standard template</em> mappings). Mappings are reusable across clients.</p>
+  <p><strong>Admin → Mappings → "➕ New mapping".</strong></p>
+  <ol class="steps">
+    <li><strong>Name it</strong>Mapping id (lowercase, e.g. <code>acme_erp_orders</code>), system name (e.g. "Acme ERP") and a description.</li>
+    <li><strong>Load sample data</strong>Upload a sample file, or read a few hundred rows from a source already configured.</li>
+    <li><strong>Add what the data contains</strong>Choose the entity (customers, orders, order_lines, products, events, tickets) and click <strong>Add</strong>. One source can feed several entities, e.g. a POS export with one row per item → <em>orders</em> and <em>order_lines</em>.</li>
+    <li><strong>Map each column</strong>For each standard column, pick the matching <em>source column</em> from the dropdown. Common names (email, mobile, order_no, qty…) are matched automatically. Use <em>or SQL expression</em> when a value needs converting (see the cookbook below). Rows marked <em>req.</em> must be filled.</li>
+    <li><strong>Set linking options</strong><em>Id namespace</em> (customers): a short name for this system's customer ids. <em>Customer ids belong to namespace</em> (orders, events, tickets): the namespace of the customer system those ids point to. <em>One row per (group by)</em>: only for line-level data that must become one row per order.</li>
+    <li><strong>Check the result</strong>The preview shows the mapped rows from the sample and any error. Fix until there are no warnings.</li>
+    <li><strong>Save mapping</strong>It is now available when adding sources.</li>
+  </ol>
+
+  <h2 id="cookbook">Mapping expression cookbook</h2>
+  <p>Expressions are DuckDB SQL over the source columns (which arrive as text). Put column names with spaces or capitals
+    in double quotes, e.g. <code>"Order Date"</code>.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Need</th><th>Expression</th></tr>
+    <tr><td>Date in dd/mm/yyyy</td><td><code>strptime("OrderDate", '%d/%m/%Y')</code></td></tr>
+    <tr><td>Date-time like 14-09-2026 18:22</td><td><code>strptime("Created", '%d-%m-%Y %H:%M')</code></td></tr>
+    <tr><td>ISO with time zone (2026-09-14T18:22:00+05:30)</td><td><code>CAST(substr(created_at, 1, 19) AS TIMESTAMP)</code></td></tr>
+    <tr><td>Unix seconds</td><td><code>to_timestamp(CAST(ts AS BIGINT))</code></td></tr>
+    <tr><td>Order status from the source's codes</td><td><code>CASE WHEN "Cancelled" = '1' THEN 'cancelled' WHEN "Returned" = '1' THEN 'refunded' ELSE 'completed' END</code></td></tr>
+    <tr><td>Status from words</td><td><code>CASE lower(state) WHEN 'delivered' THEN 'completed' WHEN 'returned' THEN 'refunded' ELSE 'cancelled' END</code></td></tr>
+    <tr><td>A constant (same for every row)</td><td><code>'Store'</code></td></tr>
+    <tr><td>Channel from a code</td><td><code>CASE "SalesChannel" WHEN 'ECOM' THEN 'Web' WHEN 'APP' THEN 'App' ELSE 'Store' END</code></td></tr>
+    <tr><td>Amount with currency symbol and commas</td><td><code>CAST(regexp_replace("Total", '[^0-9.]', '', 'g') AS DECIMAL(14,2))</code></td></tr>
+    <tr><td>Combine first and last name</td><td><code>trim("First") || ' ' || trim("Last")</code></td></tr>
+    <tr><td>Build a line id</td><td><code>"InvoiceNo" || '-' || "LineNo"</code></td></tr>
+    <tr><td>Yes/No to true/false</td><td><code>lower("OptIn") IN ('yes', 'y', 'true', '1')</code></td></tr>
+    <tr><td>Empty text to nothing</td><td><code>nullif(trim("Email"), '')</code></td></tr>
+    <tr><td>Grouped (one row per receipt): first time, any phone, total</td><td><code>min(CAST(txn_time AS TIMESTAMP))</code>, <code>any_value(phone)</code>, <code>sum(CAST(amount AS DECIMAL(14,2)))</code></td></tr>
+  </table></div>
+
+  <h2 id="sources">4. Connect sources</h2>
+  <p><strong>Admin → Sources &amp; connections</strong>, choose the client, then "➕ New source".</p>
+  <ol class="steps">
+    <li><strong>Name and mapping</strong>Source name (e.g. <code>erp_orders</code>) and "What kind of data is it?" (the mapping). For customer sources, set <strong>Golden-record priority</strong>: 1 = most trusted for names and contact details.</li>
+    <li><strong>Connection</strong>Choose one of the options below.</li>
+    <li><strong>Test connection</strong>Shows "Connected. Read N sample rows", the <em>Raw sample</em> and the result <em>After mapping</em> (including which standard columns came out empty). If the mapping doesn't fit, choose another mapping or fix it under Mappings.</li>
+    <li><strong>Save source</strong>It is loaded on the next refresh.</li>
+  </ol>
+  <div class="table-wrap"><table>
+    <tr><th>Connection</th><th>Fields</th><th>Example</th></tr>
+    <tr><td>File · Upload</td><td>Format, files. Each upload is added to the source's folder; uploading the same file name replaces it.</td><td>Monthly CSV exports from the billing system.</td></tr>
+    <tr><td>File · Path / cloud URL</td><td>Path or pattern relative to the client folder, or a cloud URL. Optional delimiter or sheet name.</td><td><code>orders/*.csv</code> · <code>s3://acme-exports/crm/*.parquet</code> · <code>az://exports/pos/*.csv</code></td></tr>
+    <tr><td>Database</td><td>Database type, connection-string credential, table or SQL query, optional incremental column.</td><td>SQL Server · <code>ACME_ERP_DB</code> · <code>sales.orders</code> · incremental <code>modified_at</code></td></tr>
+    <tr><td>REST API</td><td>URL, authentication (bearer token or API-key header + credential), records path, paging, optional incremental parameter.</td><td><code>https://api.helpdesk.com/v2/tickets</code> · records path <code>data.tickets</code> · page size 100</td></tr>
+  </table></div>
+  <div class="callout tip"><strong>Incremental loads</strong>For large database tables, set an <em>incremental column</em> that
+    increases when a row changes (e.g. <code>modified_at</code>). Each refresh then fetches only new and changed rows; the
+    latest version of each row wins.</div>
+
+  <h2 id="run">5. Load the data</h2>
+  <p>Go to <strong>Data pipeline</strong> and click <strong>Run now</strong>. The button shows "Refresh running…" with the latest
+    progress line; when it finishes, the page reloads with the new data. Dashboards keep showing the previous data while
+    a refresh runs. Scheduled refreshes also run automatically on the server.</p>
+
+  <h2 id="verify">6. Verify</h2>
+  <ul>
+    <li><strong>Data pipeline → Sources:</strong> every source "success", with plausible row counts.</li>
+    <li><strong>Data quality:</strong> all checks pass, or warnings are understood (e.g. low "orders linked to a customer" means orders lack email/phone/id).</li>
+    <li><strong>Identity resolution:</strong> the share of duplicates merged looks plausible; check "How profiles were matched".</li>
+    <li><strong>Customer 360:</strong> search 3–5 customers the client knows well and confirm orders and spend with them.</li>
+    <li><strong>Executive overview:</strong> reconcile last-12-months revenue with the client's finance figure (expect small differences for refunds/cancellations and timing).</li>
+  </ul>
+
+  <h2 id="ai">Set up the AI assistant</h2>
+  <p><strong>Admin → AI assistant.</strong> Use whichever AI service the organisation already has a key for.</p>
+  <ol class="steps">
+    <li><strong>Choose the provider</strong>Anthropic Claude, Google Gemini, OpenAI, Azure OpenAI, or OpenAI-compatible.</li>
+    <li><strong>Fill in the details</strong>See the table below. The key is stored encrypted under the credential name shown (e.g. <code>OPENAI_API_KEY</code>) and never displayed again; leave the key box blank to keep the current one.</li>
+    <li><strong>Privacy setting</strong><em>Allow sending result rows to the AI provider for summaries</em>: when off, only table descriptions and the question are sent, and answers come without a written summary.</li>
+    <li><strong>Test connection</strong>Sends a tiny request and confirms the model answers correctly.</li>
+    <li><strong>Save</strong>"Ask your data" now uses this provider; its sidebar shows the provider and model in use.</li>
+  </ol>
+  <div class="table-wrap"><table>
+    <tr><th>Provider</th><th>Model</th><th>Endpoint / base URL</th><th>Key from</th></tr>
+    <tr><td>Anthropic Claude</td><td>Blank = <code>claude-opus-5-5</code></td><td>—</td><td>console.anthropic.com</td></tr>
+    <tr><td>Google Gemini</td><td>Blank = <code>gemini-flash-latest</code></td><td>—</td><td>Google AI Studio</td></tr>
+    <tr><td>OpenAI</td><td>A model name from the OpenAI account</td><td>—</td><td>platform.openai.com</td></tr>
+    <tr><td>Azure OpenAI</td><td>The <strong>deployment</strong> name</td><td><code>https://&lt;resource&gt;.openai.azure.com</code> (+ API version)</td><td>Azure portal → resource → Keys</td></tr>
+    <tr><td>OpenAI-compatible</td><td>The service's model name</td><td>Base URL ending in <code>/v1</code>, e.g. <code>https://api.groq.com/openai/v1</code>, <code>https://api.mistral.ai/v1</code>, <code>https://openrouter.ai/api/v1</code>, <code>http://localhost:11434/v1</code> (Ollama)</td><td>The service's console (not needed for local Ollama)</td></tr>
+  </table></div>
+  <div class="callout tip"><strong>Fully on-premise option</strong>Run an open model with Ollama on the same network and choose
+    "OpenAI-compatible" with <code>http://&lt;host&gt;:11434/v1</code>: no data leaves the client's infrastructure. Answer quality
+    depends on the model; larger models write better SQL.</div>
+
+  <h2 id="changes">Changes, history and rollback</h2>
+  <ul>
+    <li>Every save is <strong>checked against the whole configuration</strong> first; if anything is wrong, nothing is saved and every problem is listed.</li>
+    <li>The previous version of every changed file is kept in <code>config/.history/</code>; IT can copy it back to roll back.</li>
+    <li><strong>Credentials &amp; history → Change history</strong> shows who changed what and when.</li>
+    <li>Changes take effect on the next refresh. Removing a source or client removes its data from dashboards after the next refresh; uploaded files are kept.</li>
+  </ul>
+
+  <h2 id="trouble">Troubleshooting sources</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Error / symptom</th><th>Cause and fix</th></tr>
+    <tr><td>File not found / No files match</td><td>Wrong path or nothing uploaded yet. Paths are relative to the client's folder.</td></tr>
+    <tr><td>Credential X is not set</td><td>Store it under Credentials (exact same name).</td></tr>
+    <tr><td>ODBC error … login failed / timeout</td><td>Wrong user/password, firewall closed, or wrong server name. Test with the client's DBA.</td></tr>
+    <tr><td>REST call failed … 401 / 403</td><td>Token wrong or expired, or missing read scope.</td></tr>
+    <tr><td>Mapping … failed: column "X" not found</td><td>The source's column names changed. Update the mapping (Mappings → load sample → re-pick).</td></tr>
+    <tr><td>must appear in the GROUP BY clause</td><td>A grouped mapping uses a plain column; wrap it in <code>any_value(...)</code>, <code>min(...)</code> or <code>sum(...)</code>.</td></tr>
+    <tr><td>Status "warning": source returned 0 rows</td><td>The export was empty; previous data is kept. Check the source system.</td></tr>
+    <tr><td>Data quality: "Order status values are valid" below 100%</td><td>The status mapping leaves unknown values; extend the CASE expression.</td></tr>
+    <tr><td>Many single-source profiles / duplicates</td><td>Systems don't share email or phone. Map more contact fields, or a shared customer id via namespaces.</td></tr>
+  </table></div>
+
+  <h2 id="playbook">Implementation playbook</h2>
+  <p>For Wishtree delivery teams. Typical timeline for a client with 4–6 systems:</p>
+  <div class="table-wrap"><table>
+    <tr><th>Week</th><th>Activities</th><th>Outcome</th></tr>
+    <tr><td>Week 1: Discover</td><td>Workshop on goals and KPIs; list systems; agree business rules; data-protection approval; request access and samples.</td><td>Source inventory, rules, access requests raised.</td></tr>
+    <tr><td>Week 1–2: Set up</td><td>Deploy server (Docker), HTTPS + login, admin password and secret key; create the client.</td><td>Environment ready.</td></tr>
+    <tr><td>Week 2–3: Connect</td><td>Store credentials; build mappings for new systems; connect and test each source; first full load.</td><td>All sources loading.</td></tr>
+    <tr><td>Week 3: Validate</td><td>Data-quality review; reconcile revenue and customer counts with the client; tune rules and priorities.</td><td>Numbers signed off.</td></tr>
+    <tr><td>Week 4: Go live</td><td>Schedule refreshes; user training (User guide); hand over Admin guide; set up monitoring and backups.</td><td>Client using it.</td></tr>
+  </table></div>
+  <h3>Go-live checklist</h3>
+  <ul>
+    <li>☐ <code>CDP_ADMIN_PASSWORD</code>, <code>CDP_SECRET_KEY</code> set; secret key stored in the password manager</li>
+    <li>☐ <code>CDP_AS_OF=today</code> (not the sample date)</li>
+    <li>☐ HTTPS and company login in front of the app</li>
+    <li>☐ All sources "success"; data-quality checks pass or are signed off</li>
+    <li>☐ Revenue and customer counts reconciled with the client</li>
+    <li>☐ Scheduler running at the agreed frequency; failure alerts in place</li>
+    <li>☐ Daily backups of the data and config volumes</li>
+    <li>☐ AI assistant: provider chosen and tested in Admin → AI assistant, result-row sharing set per the client's policy (or left unconfigured)</li>
+    <li>☐ Sample clients (Stride, UrbanLeaf) and any test clients removed</li>
+    <li>☐ Users trained; admin guide handed over</li>
+  </ul>
+
+  <h2 id="files">Doing it with files instead</h2>
+  <p>Everything above is stored as JSON files in <code>config/</code> and can also be edited directly, for automation or
+    version control. See <code>docs/ONBOARDING.md</code> in the repository for the file formats, then run
+    <code>python -m cdp validate</code> and <code>python -m cdp run</code>.</p>
+
+  <nav class="page-nav"><a href="user-guide.html">← User guide</a><a href="faq.html">FAQ, glossary &amp; limits →</a></nav>
+  <footer class="doc-footer">WishUnify · Customer Data Platform accelerator · Wishtree Technologies</footer>
+</div></main>
+</body>
+</html>

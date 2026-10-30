@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WishUnify Prerequisites and Installation</title>
+<meta name="description" content="What you need before installing WishUnify, server sizing, local setup, Docker deployment, environment variables and operations.">
+<link rel="stylesheet" href="assets/docs.css">
+<script src="assets/docs.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">WU</div><div class="brand-name">WishUnify</div></div>
+  <p class="brand-sub">Documentation · Wishtree Technologies</p>
+  <nav class="nav">
+    <div class="nav-group">Start here</div>
+    <a href="index.html">Overview</a>
+    <a href="use-cases.html">Who it's for &amp; examples</a>
+    <div class="nav-group">Understand</div>
+    <a href="architecture.html">Architecture</a>
+    <a href="data-requirements.html">Data requirements</a>
+    <div class="nav-group">Set up &amp; use</div>
+    <a href="prerequisites.html" aria-current="page">Prerequisites &amp; installation</a>
+    <a href="user-guide.html">User guide</a>
+    <a href="admin-guide.html">Admin &amp; onboarding guide</a>
+    <div class="nav-group">Reference</div>
+    <a href="faq.html">FAQ, glossary &amp; limits</a>
+  </nav>
+  <button class="theme-toggle" type="button">Theme: system</button>
+</aside>
+
+<main><div class="content">
+  <header class="page-head">
+    <div class="eyebrow">Set up</div>
+    <h1>Prerequisites &amp; installation</h1>
+    <p class="lead">Everything needed before installing WishUnify, how to run it on a laptop for a demo, how to deploy it
+      on a server for a client, and how to operate it day to day.</p>
+  </header>
+
+  <div class="toc"><strong>On this page</strong><ol>
+    <li><a href="#checklist">Prerequisite checklist</a></li>
+    <li><a href="#from-client">What to get from the client</a></li>
+    <li><a href="#sizing">Server sizing</a></li>
+    <li><a href="#network">Network access</a></li>
+    <li><a href="#local">Install on a laptop (demo)</a></li>
+    <li><a href="#server">Deploy on a server (Docker)</a></li>
+    <li><a href="#env">Settings (environment variables)</a></li>
+    <li><a href="#cli">Command-line tool</a></li>
+    <li><a href="#ops">Operating it</a></li>
+    <li><a href="#trouble">Common setup problems</a></li>
+  </ol></div>
+
+  <h2 id="checklist">Prerequisite checklist</h2>
+  <h3>People</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Role</th><th>Needs</th></tr>
+    <tr><td>Business users</td><td>A modern browser (Chrome, Edge, Firefox, Safari) and the app's URL. Nothing to install.</td></tr>
+    <tr><td>Admin (onboards clients and sources)</td><td>The admin password. Basic understanding of the client's systems and data.</td></tr>
+    <tr><td>IT / DevOps (installs and runs it)</td><td>A server or VM with Docker, or a machine with Python; access to the client's network and sources.</td></tr>
+  </table></div>
+
+  <h3>Software</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Where</th><th>Required</th><th>Notes</th></tr>
+    <tr><td>Server (recommended)</td><td>Linux VM with <strong>Docker 24+</strong> and Docker Compose v2</td><td>Everything else, including the SQL Server ODBC driver, is inside the image.</td></tr>
+    <tr><td>Laptop / without Docker</td><td><strong>Python 3.13</strong>, Git</td><td>Windows, macOS or Linux.</td></tr>
+    <tr><td>Database sources (non-Docker)</td><td>The database's <strong>ODBC driver</strong> (e.g. "ODBC Driver 18 for SQL Server", Oracle Instant Client ODBC)</td><td>Only for SQL Server, Oracle or other ODBC sources. PostgreSQL, MySQL and SQLite need no driver.</td></tr>
+  </table></div>
+
+  <h3>Keys and secrets</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Item</th><th>Required?</th><th>How to get it</th></tr>
+    <tr><td><code>CDP_ADMIN_PASSWORD</code></td><td><span class="badge req">Production</span></td><td>Choose a strong password. Protects the admin screens.</td></tr>
+    <tr><td><code>CDP_SECRET_KEY</code></td><td><span class="badge req">Production</span></td><td>Run <code>python -m cdp secret-key</code> (or <code>docker compose run --rm cli secret-key</code>). Keep a safe copy: stored credentials cannot be read without it.</td></tr>
+    <tr><td>An AI provider key</td><td><span class="badge opt">Optional</span></td><td>Any one of: Anthropic Claude, Google Gemini, OpenAI, Azure OpenAI, or an OpenAI-compatible service (Groq, Mistral, OpenRouter, local Ollama). Entered in the app under <strong>Admin → AI assistant</strong>. Without it, "Ask your data" runs its built-in example questions only.</td></tr>
+  </table></div>
+
+  <h2 id="from-client">What to get from the client</h2>
+  <ul>
+    <li><strong>List of systems</strong> that hold customer data (store, CRM, POS, helpdesk, website analytics, loyalty, ERP) and an owner for each.</li>
+    <li><strong>Access to each</strong> (read-only is enough):
+      <ul>
+        <li>Files: exports (CSV/Excel/JSON/Parquet), or a storage location (S3 bucket, Azure container, SFTP drop) with read credentials.</li>
+        <li>Databases: host, port, database name, a <strong>read-only user</strong>, and the tables or a query; firewall opened to the WishUnify server.</li>
+        <li>APIs: base URL, a token with read scope, and the API documentation (paging, rate limits).</li>
+      </ul>
+    </li>
+    <li><strong>A small sample</strong> (a few hundred rows) of each source, to build and test mappings.</li>
+    <li><strong>Business definitions</strong>: what "active" means (e.g. bought within 6 months), churn thresholds, tier spend limits, which source is the most trusted for names and contact details.</li>
+    <li><strong>Data-protection approval</strong> for processing personal data (names, emails, phones) and, if the AI assistant is used, for sending aggregated results to the AI provider.</li>
+  </ul>
+  <p>See <a href="data-requirements.html">Data requirements</a> for exactly which fields are needed.</p>
+
+  <h2 id="sizing">Server sizing</h2>
+  <p>Starting points; validate with the client's real volumes.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Size</th><th>Typical client</th><th>CPU</th><th>RAM</th><th>Disk (SSD)</th></tr>
+    <tr><td>Demo / POC</td><td>Sample data, up to ~1 million rows</td><td>2 vCPU</td><td>4–8 GB</td><td>20 GB</td></tr>
+    <tr><td>Small</td><td>Up to ~500k customers, ~10 million rows</td><td>4 vCPU</td><td>16 GB</td><td>100 GB</td></tr>
+    <tr><td>Medium</td><td>Up to ~5 million customers, ~50 million rows</td><td>8 vCPU</td><td>32 GB</td><td>250 GB+</td></tr>
+    <tr><td>Large</td><td>Beyond that</td><td colspan="3">Move the SQL models to Databricks / Snowflake / Fabric (see <a href="architecture.html#scale">Architecture → Scale</a>).</td></tr>
+  </table></div>
+  <div class="callout info"><strong>Disk rule of thumb</strong>Allow about <strong>3× the warehouse size</strong>: the live warehouse,
+    the working copy built during each refresh, plus room for growth and backups.</div>
+
+  <h2 id="network">Network access</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Direction</th><th>To</th><th>Why</th></tr>
+    <tr><td>Inbound</td><td>Port 8501 on the server, ideally behind HTTPS (443) and the company login proxy</td><td>Users reach the web app.</td></tr>
+    <tr><td>Outbound</td><td>Each source: database ports (1433 SQL Server, 1521 Oracle, 5432 PostgreSQL, 3306 MySQL), storage endpoints, API hosts</td><td>Reading client data.</td></tr>
+    <tr><td>Outbound</td><td>The chosen AI provider: <code>api.anthropic.com</code>, <code>generativelanguage.googleapis.com</code>, <code>api.openai.com</code>, your Azure OpenAI endpoint, or the compatible service's URL</td><td>AI assistant (optional; not needed with a local Ollama server).</td></tr>
+    <tr><td>Outbound (build / install only)</td><td>PyPI, Docker Hub, <code>packages.microsoft.com</code>; DuckDB extension downloads for cloud storage / PostgreSQL / MySQL</td><td>Installing packages and drivers.</td></tr>
+  </table></div>
+
+  <h2 id="local">Install on a laptop (demo)</h2>
+  <ol class="steps">
+    <li><strong>Get the code</strong>
+<pre><code>git clone https://github.com/wishtree-ssonalkar/Data360Accelarator.git
+cd Data360Accelarator</code></pre></li>
+    <li><strong>Create a virtual environment and install</strong>
+<pre><code>python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements-dev.txt      # Windows
+# .venv/bin/python -m pip install -r requirements-dev.txt        # macOS / Linux</code></pre></li>
+    <li><strong>Check the configuration</strong>
+<pre><code>.venv\Scripts\python -m cdp validate</code></pre></li>
+    <li><strong>Create the sample data and load it</strong>
+<pre><code>.venv\Scripts\python -m cdp sample-data
+.venv\Scripts\python -m cdp run</code></pre>
+      This takes about 10 seconds and prints each source and model it builds.</li>
+    <li><strong>(Optional) Enable the AI assistant</strong>After starting the app, open <strong>Admin → AI assistant</strong>, choose your provider (Claude, Gemini, OpenAI, Azure OpenAI or OpenAI-compatible), enter the model and API key, click <strong>Test connection</strong>, then <strong>Save</strong>. (Setting <code>ANTHROPIC_API_KEY</code>, <code>GEMINI_API_KEY</code> or <code>OPENAI_API_KEY</code> as an environment variable also works.)</li>
+    <li><strong>Start the app</strong>
+<pre><code>.venv\Scripts\streamlit run app\streamlit_app.py</code></pre>
+      Open <code>http://localhost:8501</code>. On a laptop without <code>CDP_ADMIN_PASSWORD</code>, the admin screens open with a warning banner.</li>
+    <li><strong>(Optional) Run the tests</strong>
+<pre><code>.venv\Scripts\python -m pytest -q</code></pre></li>
+  </ol>
+
+  <h2 id="server">Deploy on a server (Docker)</h2>
+  <ol class="steps">
+    <li><strong>Get the code on the server</strong>
+<pre><code>git clone https://github.com/wishtree-ssonalkar/Data360Accelarator.git
+cd Data360Accelarator</code></pre></li>
+    <li><strong>Create the settings file</strong>
+<pre><code>cp .env.example .env
+docker compose build
+docker compose run --rm cli secret-key      # copy the printed key</code></pre>
+      Edit <code>.env</code>: set <code>CDP_ADMIN_PASSWORD</code>, <code>CDP_SECRET_KEY</code>, <code>CDP_AS_OF=today</code>, and optionally an AI key (or add it later in Admin → AI assistant).
+      Never commit <code>.env</code>.</li>
+    <li><strong>(Demo only) Load sample data</strong>
+<pre><code>docker compose run --rm cli sample-data
+docker compose run --rm pipeline-once</code></pre>
+      For a real client, skip this and onboard their sources from the Admin screens instead.</li>
+    <li><strong>Start the app and the scheduler</strong>
+<pre><code>docker compose up -d app scheduler</code></pre>
+      The scheduler refreshes every <code>CDP_REFRESH_MINUTES</code> (default 360 = 6 hours).</li>
+    <li><strong>Put it behind HTTPS and the company login</strong>Use the organisation's reverse proxy (Nginx, Azure Application Gateway, AWS ALB) with SSO, forwarding to port 8501.</li>
+    <li><strong>Onboard the client</strong>Follow the <a href="admin-guide.html">Admin &amp; onboarding guide</a>.</li>
+  </ol>
+  <div class="callout tip"><strong>Volumes</strong><code>cdp-data</code> holds the warehouse, uploaded files, encrypted credentials and logs;
+    <code>cdp-config</code> holds clients and mappings edited in the UI. <strong>Back up both.</strong></div>
+
+  <h2 id="env">Settings (environment variables)</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Variable</th><th>Purpose</th><th>Default</th></tr>
+    <tr><td><code>CDP_ADMIN_PASSWORD</code></td><td>Admin screens password</td><td>none (open in development, locked in production)</td></tr>
+    <tr><td><code>CDP_SECRET_KEY</code></td><td>Encryption key for stored credentials</td><td>development key generated in <code>data/.secret_key</code></td></tr>
+    <tr><td><code>CDP_ENV</code></td><td><code>production</code> locks admin screens until a password is set</td><td><code>production</code> in Docker</td></tr>
+    <tr><td><code>CDP_AS_OF</code></td><td>"Today" for all recency metrics: <code>today</code> or a fixed date</td><td>2026-10-15 (sample data)</td></tr>
+    <tr><td><code>CDP_REFRESH_MINUTES</code></td><td>Scheduler interval (docker-compose)</td><td>360</td></tr>
+    <tr><td><code>CDP_WAREHOUSE</code></td><td>Warehouse file</td><td><code>data/warehouse.duckdb</code></td></tr>
+    <tr><td><code>CDP_SOURCES_ROOT</code></td><td>Folder for client files and uploads</td><td><code>data/sources</code></td></tr>
+    <tr><td><code>CDP_SECRETS_PATH</code></td><td>Encrypted credential store file</td><td><code>data/secrets.enc</code></td></tr>
+    <tr><td><code>CDP_LOG_DIR</code></td><td>Log folder</td><td><code>data/logs</code></td></tr>
+    <tr><td><code>CDP_CONFIG_DIR</code></td><td>Configuration folder</td><td><code>config</code></td></tr>
+    <tr><td>AI keys: <code>ANTHROPIC_API_KEY</code>, <code>GEMINI_API_KEY</code>, <code>OPENAI_API_KEY</code>, <code>AZURE_OPENAI_API_KEY</code>, <code>OPENAI_COMPATIBLE_API_KEY</code></td><td>Optional alternative to entering the key in Admin → AI assistant</td><td>—</td></tr>
+    <tr><td><code>CDP_AI_PROVIDER</code></td><td>Which provider to use when no choice has been saved in the UI and several keys are set</td><td>first key found</td></tr>
+    <tr><td>Source credentials</td><td>Any name referenced by a source (e.g. <code>ACME_ERP_DB</code>), if not stored in the UI</td><td>—</td></tr>
+    <tr><td>Cloud storage</td><td><code>AZURE_STORAGE_CONNECTION_STRING</code> / <code>AZURE_STORAGE_ACCOUNT</code>; AWS credential chain; <code>GCS_HMAC_KEY_ID</code> + <code>GCS_HMAC_SECRET</code></td><td>—</td></tr>
+  </table></div>
+
+  <h2 id="cli">Command-line tool</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Command</th><th>Does</th></tr>
+    <tr><td><code>python -m cdp validate</code></td><td>Checks all configuration and lists every problem.</td></tr>
+    <tr><td><code>python -m cdp run</code></td><td>Loads all sources and rebuilds everything. Exit code 0 = success, 2 = partial, 1 = failed.</td></tr>
+    <tr><td><code>python -m cdp run --tenant stride</code></td><td>Loads only one client's sources (models are rebuilt for all).</td></tr>
+    <tr><td><code>python -m cdp run --full-refresh</code></td><td>Ignores incremental watermarks and reloads everything.</td></tr>
+    <tr><td><code>python -m cdp schedule --every-minutes 360</code></td><td>Runs forever on a fixed interval.</td></tr>
+    <tr><td><code>python -m cdp status</code></td><td>Shows the last runs and each source's result.</td></tr>
+    <tr><td><code>python -m cdp sample-data</code></td><td>Creates the demo source files.</td></tr>
+    <tr><td><code>python -m cdp secret-key</code></td><td>Generates a <code>CDP_SECRET_KEY</code>.</td></tr>
+  </table></div>
+
+  <h2 id="ops">Operating it</h2>
+  <ul>
+    <li><strong>Monitoring:</strong> the Data pipeline page shows the last run, failing sources and data-quality results. For alerts, watch the scheduler's exit codes or the JSON log <code>data/logs/pipeline.log</code> (ship it to your log tool).</li>
+    <li><strong>Backups:</strong> back up the data and config volumes daily. Keep <code>CDP_SECRET_KEY</code> in your password manager.</li>
+    <li><strong>Upgrades:</strong> <code>git pull</code>, <code>docker compose build</code>, <code>docker compose up -d</code>. Data and configuration are on volumes, so they are kept.</li>
+    <li><strong>Rolling back a configuration change:</strong> previous versions are in <code>config/.history/</code>; copy the file back.</li>
+    <li><strong>Refresh frequency:</strong> 1–4 times a day suits most clients. Incremental sources make frequent refreshes cheap.</li>
+  </ul>
+
+  <h2 id="trouble">Common setup problems</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Symptom</th><th>Fix</th></tr>
+    <tr><td>"The warehouse has not been built yet"</td><td>Run the pipeline once (<code>python -m cdp run</code> or <strong>Run now</strong>).</td></tr>
+    <tr><td>Admin pages say "locked"</td><td>Set <code>CDP_ADMIN_PASSWORD</code> and restart the app.</td></tr>
+    <tr><td>"Credential X is not set"</td><td>Add it under Admin → Credentials, or as an environment variable.</td></tr>
+    <tr><td>"cannot be decrypted - was CDP_SECRET_KEY changed?"</td><td>Restore the original key, or re-enter the credentials.</td></tr>
+    <tr><td>"…building.duckdb exists"</td><td>Another refresh is running. If none is, a previous run crashed: delete that file.</td></tr>
+    <tr><td>ODBC error "Data source name not found"</td><td>Install the database's ODBC driver and use its exact name in the connection string.</td></tr>
+    <tr><td>pip install times out</td><td>Retry with <code>pip install --retries 10 --timeout 60 -r requirements.txt</code>; corporate proxies may need <code>HTTPS_PROXY</code>.</td></tr>
+  </table></div>
+
+  <nav class="page-nav"><a href="data-requirements.html">← Data requirements</a><a href="user-guide.html">User guide →</a></nav>
+  <footer class="doc-footer">WishUnify · Customer Data Platform accelerator · Wishtree Technologies</footer>
+</div></main>
+</body>
+</html>
