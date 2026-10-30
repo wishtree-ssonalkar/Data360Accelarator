@@ -1,0 +1,21 @@
+{
+  "description": "Zendesk tickets export (or Incremental Tickets API flattened).",
+  "system": "Zendesk",
+  "read": {"format": "csv"},
+  "outputs": [
+    {
+      "entity": "tickets",
+      "columns": {
+        "ticket_id": "ticket_id",
+        "email": "requester_email",
+        "created_at": "CAST(substr(created_at, 1, 19) AS TIMESTAMP)",
+        "issue_type": "subject",
+        "status": "status",
+        "priority": "priority",
+        "csat": "TRY_CAST(nullif(satisfaction_score, '') AS INTEGER)",
+        "sku": "nullif(related_sku, '')",
+        "channel": "channel"
+      }
+    }
+  ]
+}

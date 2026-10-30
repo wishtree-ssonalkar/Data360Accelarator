@@ -1,0 +1,53 @@
+{
+  "tenant_id": "stride",
+  "name": "Stride Footwear",
+  "industry": "Footwear retail",
+  "currency": "INR",
+  "phone_digits": 10,
+  "business_rules": {},
+  "sample_data": {"people": 1800, "seed": 11},
+  "sources": [
+    {
+      "name": "shopify_customers",
+      "type": "shopify_customers",
+      "priority": 1,
+      "connector": {"kind": "file", "path": "shopify/customers.csv"}
+    },
+    {
+      "name": "shopify_orders",
+      "type": "shopify_orders",
+      "connector": {"kind": "file", "path": "shopify/orders.csv"}
+    },
+    {
+      "name": "shopify_order_items",
+      "type": "shopify_order_items",
+      "connector": {"kind": "file", "path": "shopify/order_items.csv"}
+    },
+    {
+      "name": "crm_contacts",
+      "type": "salesforce_contacts",
+      "priority": 2,
+      "connector": {"kind": "file", "path": "crm/contacts.csv"}
+    },
+    {
+      "name": "pos_sales",
+      "type": "pos_sales_lines",
+      "connector": {"kind": "file", "path": "pos/sales.csv"}
+    },
+    {
+      "name": "support_tickets",
+      "type": "zendesk_tickets",
+      "connector": {"kind": "file", "path": "support/tickets.csv"}
+    },
+    {
+      "name": "web_events",
+      "type": "web_events_jsonl",
+      "connector": {"kind": "file", "path": "web/events.jsonl"}
+    },
+    {
+      "name": "product_catalog",
+      "type": "product_catalog",
+      "connector": {"kind": "file", "path": "catalog/products.csv"}
+    }
+  ]
+}

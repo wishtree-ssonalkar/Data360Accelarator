@@ -1,0 +1,21 @@
+{
+  "description": "Salesforce Contact object (report export or Bulk API), dd/mm/yyyy dates.",
+  "system": "Salesforce",
+  "read": {"format": "csv"},
+  "outputs": [
+    {
+      "entity": "customers",
+      "namespace": "salesforce",
+      "columns": {
+        "source_key": "ContactId",
+        "email": "Email",
+        "phone": "Phone",
+        "full_name": "trim(FullName)",
+        "city": "upper(left(trim(MailingCity), 1)) || lower(substr(trim(MailingCity), 2))",
+        "region": "OwnerRegion",
+        "lead_source": "LeadSource",
+        "created_at": "CAST(strptime(CreatedDate, '%d/%m/%Y') AS TIMESTAMP)"
+      }
+    }
+  ]
+}

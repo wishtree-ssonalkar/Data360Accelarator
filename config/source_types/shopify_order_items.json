@@ -1,0 +1,17 @@
+{
+  "description": "Shopify order line items export: one row per line.",
+  "system": "Shopify",
+  "read": {"format": "csv"},
+  "outputs": [
+    {
+      "entity": "order_lines",
+      "columns": {
+        "line_id": "line_id",
+        "order_id": "order_id",
+        "sku": "trim(sku)",
+        "quantity": "CAST(quantity AS INTEGER)",
+        "line_amount": "CAST(price AS DECIMAL(14,2)) * CAST(quantity AS INTEGER)"
+      }
+    }
+  ]
+}

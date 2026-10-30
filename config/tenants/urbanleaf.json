@@ -1,0 +1,32 @@
+{
+  "tenant_id": "urbanleaf",
+  "name": "UrbanLeaf Home",
+  "industry": "Home decor",
+  "currency": "INR",
+  "phone_digits": 10,
+  "business_rules": {
+    "active_window_days": 365,
+    "churn_risk_high_days": 420,
+    "churn_risk_medium_days": 240,
+    "tier_thresholds": {"Platinum": 80000, "Gold": 35000, "Silver": 12000}
+  },
+  "sample_data": {"people": 1100, "seed": 29},
+  "sources": [
+    {"name": "shopify_customers", "type": "shopify_customers", "priority": 1,
+     "connector": {"kind": "file", "path": "shopify/customers.csv"}},
+    {"name": "shopify_orders", "type": "shopify_orders",
+     "connector": {"kind": "file", "path": "shopify/orders.csv"}},
+    {"name": "shopify_order_items", "type": "shopify_order_items",
+     "connector": {"kind": "file", "path": "shopify/order_items.csv"}},
+    {"name": "crm_contacts", "type": "salesforce_contacts", "priority": 2,
+     "connector": {"kind": "file", "path": "crm/contacts.csv"}},
+    {"name": "pos_sales", "type": "pos_sales_lines",
+     "connector": {"kind": "file", "path": "pos/sales.csv"}},
+    {"name": "support_tickets", "type": "zendesk_tickets",
+     "connector": {"kind": "file", "path": "support/tickets.csv"}},
+    {"name": "web_events", "type": "web_events_jsonl",
+     "connector": {"kind": "file", "path": "web/events.jsonl"}},
+    {"name": "product_catalog", "type": "product_catalog",
+     "connector": {"kind": "file", "path": "catalog/products.csv"}}
+  ]
+}

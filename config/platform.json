@@ -1,0 +1,19 @@
+{
+  "_comment": "Platform-wide settings. Paths and as-of date can be overridden with the CDP_* environment variables listed in cdp/config.py.",
+  "branding": {
+    "product_name": "WishUnify",
+    "tagline": "Customer Data Platform accelerator",
+    "company": "Wishtree Technologies"
+  },
+  "warehouse_path": "data/warehouse.duckdb",
+  "sources_root": "data/sources",
+  "as_of_date": "2026-10-15",
+  "log_dir": "data/logs",
+  "default_business_rules": {
+    "active_window_days": 180,
+    "churn_risk_high_days": 240,
+    "churn_risk_medium_days": 120,
+    "recent_activity_days": 90,
+    "tier_thresholds": {"Platinum": 60000, "Gold": 25000, "Silver": 8000}
+  }
+}

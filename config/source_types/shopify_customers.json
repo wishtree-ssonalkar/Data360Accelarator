@@ -1,0 +1,21 @@
+{
+  "description": "Shopify customer export (Admin > Customers > Export, or the Customers API flattened to CSV).",
+  "system": "Shopify",
+  "read": {"format": "csv"},
+  "outputs": [
+    {
+      "entity": "customers",
+      "namespace": "shopify",
+      "columns": {
+        "source_key": "id",
+        "email": "email",
+        "phone": "phone",
+        "first_name": "trim(first_name)",
+        "last_name": "trim(last_name)",
+        "city": "default_address_city",
+        "accepts_marketing": "lower(accepts_marketing) = 'true'",
+        "created_at": "CAST(substr(created_at, 1, 19) AS TIMESTAMP)"
+      }
+    }
+  ]
+}

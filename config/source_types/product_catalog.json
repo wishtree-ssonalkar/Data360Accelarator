@@ -1,0 +1,19 @@
+{
+  "description": "Product catalog / PIM export.",
+  "system": "Catalog",
+  "read": {"format": "csv"},
+  "outputs": [
+    {
+      "entity": "products",
+      "columns": {
+        "sku": "trim(sku)",
+        "product_name": "trim(title)",
+        "category": "trim(category)",
+        "list_price": "CAST(list_price AS DECIMAL(14,2))",
+        "unit_cost": "CAST(unit_cost AS DECIMAL(14,2))",
+        "launched_on": "CAST(launched_on AS DATE)",
+        "is_active": "lower(is_active) = 'true'"
+      }
+    }
+  ]
+}

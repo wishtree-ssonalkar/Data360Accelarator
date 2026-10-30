@@ -1,0 +1,26 @@
+{
+  "description": "Web/app tracking events as newline-delimited JSON (Segment/Snowplow/GA4-export style). Each anonymous_id is one session.",
+  "system": "Web & App",
+  "read": {
+    "format": "jsonl",
+    "columns": {
+      "event_id": "VARCHAR", "event_type": "VARCHAR", "timestamp": "VARCHAR", "user_email": "VARCHAR",
+      "anonymous_id": "VARCHAR", "device": "VARCHAR", "sku": "VARCHAR", "order_id": "VARCHAR"
+    }
+  },
+  "outputs": [
+    {
+      "entity": "events",
+      "columns": {
+        "event_id": "event_id",
+        "event_type": "event_type",
+        "event_ts": "CAST(substr(\"timestamp\", 1, 19) AS TIMESTAMP)",
+        "email": "user_email",
+        "session_id": "anonymous_id",
+        "device": "device",
+        "sku": "sku",
+        "order_id": "order_id"
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "description": "Shopify orders export: one row per order.",
+  "system": "Shopify",
+  "read": {"format": "csv"},
+  "outputs": [
+    {
+      "entity": "orders",
+      "customer_namespace": "shopify",
+      "columns": {
+        "order_id": "order_id",
+        "customer_source_key": "customer_id",
+        "order_ts": "CAST(substr(created_at, 1, 19) AS TIMESTAMP)",
+        "channel": "CASE source_name WHEN 'shopify_mobile_app' THEN 'App' ELSE 'Web' END",
+        "status": "CASE financial_status WHEN 'paid' THEN 'completed' WHEN 'refunded' THEN 'refunded' ELSE 'cancelled' END"
+      }
+    }
+  ]
+}

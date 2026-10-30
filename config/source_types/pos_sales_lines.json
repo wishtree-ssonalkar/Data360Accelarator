@@ -1,0 +1,29 @@
+{
+  "description": "Store POS export with one row per receipt line; the customer is identified only by phone. Produces both orders (grouped by receipt) and order lines.",
+  "system": "Store POS",
+  "read": {"format": "csv"},
+  "outputs": [
+    {
+      "entity": "orders",
+      "group_by": ["receipt_no"],
+      "columns": {
+        "order_id": "receipt_no",
+        "phone": "any_value(nullif(customer_phone, ''))",
+        "order_ts": "min(CAST(txn_datetime AS TIMESTAMP))",
+        "channel": "'Store'",
+        "store_code": "any_value(store_code)",
+        "status": "CASE WHEN bool_or(lower(is_return) = 'true') THEN 'refunded' ELSE 'completed' END"
+      }
+    },
+    {
+      "entity": "order_lines",
+      "columns": {
+        "line_id": "receipt_line",
+        "order_id": "receipt_no",
+        "sku": "trim(sku)",
+        "quantity": "CAST(qty AS INTEGER)",
+        "line_amount": "CAST(line_amount AS DECIMAL(14,2))"
+      }
+    }
+  ]
+}

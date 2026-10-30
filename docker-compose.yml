@@ -1,0 +1,40 @@
+# Local / single-server deployment.
+#   docker compose run --rm pipeline-once      # first load (or: docker compose run --rm cli sample-data)
+#   docker compose up -d app scheduler         # app on http://localhost:8501 + scheduled refresh
+#
+# Refreshes are zero-downtime: each run builds a copy of the warehouse and swaps it in when done.
+
+# Secrets (AI keys, database connection strings) come from .env - never commit that file.
+
+x-common: &common
+  build: .
+  image: wishunify:latest
+  env_file: [.env]
+  volumes:
+    - cdp-data:/data
+    - cdp-config:/opt/cdp/config     # editable from the admin UI; seeded from the image on first start
+
+services:
+  app:
+    <<: *common
+    ports: ["8501:8501"]
+    restart: unless-stopped
+
+  scheduler:
+    <<: *common
+    command: ["python", "-m", "cdp", "schedule", "--every-minutes", "${CDP_REFRESH_MINUTES:-360}"]
+    restart: unless-stopped
+
+  pipeline-once:
+    <<: *common
+    command: ["python", "-m", "cdp", "run"]
+    profiles: ["manual"]
+
+  cli:
+    <<: *common
+    entrypoint: ["python", "-m", "cdp"]
+    profiles: ["manual"]
+
+volumes:
+  cdp-config:
+  cdp-data:
